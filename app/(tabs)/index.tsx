@@ -1,98 +1,133 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
+import HomeHeader from "@/components/HomeHeader";
+import HomeSubcriptions from "@/components/HomeSubcriptions";
+import ListHeading from "@/components/ListHeading";
+import { StyledSafeAreaView } from "@/components/StyledSafeAreaView";
+import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
+import { HOME_SUBSCRIPTIONS, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
+import { icons } from "@/constants/icons";
+import { formatCurrency } from "@/lib/utils";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { FlatList, Image, Text, View } from "react-native";
+import {colors} from "@/constants/theme";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function App() {
+  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+  const [subscriptions, setSubscriptions] = useState(HOME_SUBSCRIPTIONS);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const router = useRouter();
 
-export default function HomeScreen() {
+  const handleAddSubscription = (newSub: Subscription) => {
+    HOME_SUBSCRIPTIONS.unshift(newSub); // Mutate constant for other screens
+    setSubscriptions([newSub, ...subscriptions]); // Update local state for immediate UI refresh
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <>
+      <StyledSafeAreaView className="flex-1 bg-background">
+        <HomeHeader onAddPress={() => setIsModalVisible(true)} />
+        <FlatList
+          ListHeaderComponent={() => (
+            <View className="px-4">
+              <View className="home-balance-card">
+                <Text className="home-balance-label">Total Monthly Spend</Text>
+                <Text className="home-balance-amount">
+                  {formatCurrency(subscriptions.reduce((total, sub) => total + sub.price, 0), "USD")}
+                </Text>
+              </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+              <View className="home-stats-container">
+                <View className="home-stats-card">
+                  <View className="home-stats-row">
+                    <View className="home-stats-icon">
+                      <Image source={icons.barchart} className="w-4 h-4" style={{ tintColor: colors.accent }}/>
+                    </View>
+                    <Text className= "home-stats-label">ACTIVE</Text>
+                  </View>
+
+                  <Text className="home-stats-value">
+                    {subscriptions.filter((sub) => sub.status === "active").length}
+                  </Text>
+                </View>
+                <View className="home-stats-card">
+                  <View className="home-stats-row">
+                    <View className="home-stats-icon">
+                      <Image source={icons.trend} className="w-4 h-4" style={{ tintColor: colors.accent }}/>
+                    </View>
+                    <Text className= "home-stats-label">AVG. COST</Text>
+                  </View>
+
+                  <Text className="home-stats-value">
+                    {formatCurrency(
+                      subscriptions.reduce((total, sub) => total + sub.price, 0) / subscriptions.length || 0,
+                      "USD"
+                    )}
+                  </Text>
+                </View>
+
+              </View>
+
+              <View className="list-head">
+                <Text className="list-title">Upcoming Subscriptions</Text>
+              </View>
+
+
+              <FlatList
+                data={UPCOMING_SUBSCRIPTIONS}
+                renderItem={({ item }) => (
+                  <UpcomingSubscriptionCard {...item} />
+                )}
+                keyExtractor={(item) => item.id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerClassName="mb-2"
+                ListEmptyComponent={
+                  <View className="home-empty-state-container">
+                    <Image source={icons.notfound} className="home-empty-state-icon" />
+                    <Text className="home-empty-state">
+                      NO UPCOMING RENEWALS!!
+                    </Text>
+                  </View>
+                }
+              />
+              <View className="h-2" />
+              <ListHeading
+                title="Active Subscriptions"
+                onPress={() => router.push("/subscriptions")}
+              />
+            </View>
+          )}
+          data={subscriptions.filter((sub) => sub.status === "active").slice(0, 3)}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <HomeSubcriptions
+              {...item}
+              expanded={expandedSubscriptionId === item.id}
+              onPress={() =>
+                setExpandedSubscriptionId((currentId) =>
+                  currentId === item.id ? null : item.id,
+                )
+              }
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View className="home-empty-state-container">
+              <Image source={icons.oops} className="home-empty-state-icon" />
+              <Text className="home-empty-state">NO ACTIVE SUBSCRIPTION!!</Text>
+            </View>
+          }
+          // ItemSeparatorComponent={() => <View className="h-2" />}
+          contentContainerClassName="pb-30"
+          extraData={expandedSubscriptionId}
+        />
+      </StyledSafeAreaView>
+      <CreateSubscriptionModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onAdd={handleAddSubscription}
+      />
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

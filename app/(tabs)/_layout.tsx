@@ -1,35 +1,105 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { tabs } from "@/constants/data";
+import { colors, components } from "@/constants/theme";
+import { useAuth, useUser } from "@clerk/expo";
+import { BlurView } from "expo-blur";
+import { Redirect, Tabs } from "expo-router";
+import { usePostHog } from "posthog-react-native";
+import React from "react";
+import { Image, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+const tabBar = components.tabBar;
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+const TabIcon = ({ focused, icon }: TabIconProps) => {
+  return (
+    <View className="tabs-pill">
+      <Image
+        source={icon}
+        className="tabs-glyph"
+        style={{
+          tintColor: focused ? colors.accent : undefined,
+        }}
+      />
+    </View>
+  );
+};
+const TabLayout = () => {
+  const { isSignedIn, isLoaded } = useAuth();
+  const { user } = useUser();
+  const insets = useSafeAreaInsets();
+  const posthog = usePostHog();
+
+  React.useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      // Link Clerk user data to PostHog
+      posthog.identify(user.id, {
+        email: user.primaryEmailAddress?.emailAddress as string,
+        name: user.fullName,
+      });
+    } 
+  }, [isLoaded, isSignedIn, user, posthog]);
+
+  if (!isLoaded) {
+    return null;
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/welcome" />;
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          position: "absolute",
+          bottom: Math.max(insets.bottom, tabBar.horizontalInset),
+          height: tabBar.height,
+          marginHorizontal: tabBar.horizontalInset,
+          borderRadius: tabBar.radius,
+          borderTopWidth:0,
+          elevation: 0,
+          overflow: "hidden",
+        },
+
+        tabBarItemStyle: {
+          flex: 1,
+          alignItems: "center",
+          paddingTop: 2,
+        },
+
+        tabBarIconStyle: {
+          width: 50,
+          height: 50,
+        },
+
+        tabBarBackground: () => (
+          <BlurView
+            intensity={50}
+            tint="light"
+            style={{
+              flex: 1,
+            }}
+          />
+        ),
+      }}
+    >
+      {tabs.map((tab) => (
+        <Tabs.Screen
+          key={tab.name}
+          name={tab.name}
+          options={{
+            title: tab.title,
+
+            tabBarIcon: ({ focused }) => (
+              <TabIcon focused={focused} icon={tab.icon} />
+            ),
+          }}
+        />
+      ))}
     </Tabs>
   );
-}
+};
+
+export default TabLayout;

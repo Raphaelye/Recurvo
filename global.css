@@ -1,0 +1,487 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@import "nativewind/theme";
+
+@theme {
+    --color-background: #161616;
+    --color-secondarybg: #1E1E1E;
+    --color-black: #060606;
+
+    --color-foreground: #FFFFFF;
+    --color-muted: #B0B0B0;
+    --color-accent:#e37532;
+
+    --color-card: rgba(225, 225, 225, 0.06);
+    --color-border: rgba(225, 225, 225, 0.1);
+
+
+    --color-primary: #ffffff;
+    --color-muted-foreground: rgba(225, 225, 225, 0.6);
+    
+
+    --color-success: #16a34a;
+    --color-destructive: #dc2626;
+    --color-subscription: #8fd1bd;
+
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 28px;
+    --spacing-8: 32px;
+    --spacing-9: 36px;
+    --spacing-10: 40px;
+    --spacing-11: 44px;
+    --spacing-12: 48px;
+    --spacing-14: 56px;
+    --spacing-16: 64px;
+    --spacing-18: 72px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-30: 120px;
+
+    --font-sans: sans-regular;
+    --font-sans-light: sans-light;
+    --font-sans-medium: sans-medium;
+    --font-sans-semibold: sans-semibold;
+    --font-sans-bold: sans-bold;
+    --font-sans-extrabold: sans-extrabold;
+
+
+
+}
+
+@layer components {
+
+    .card-glass{
+        @apply border border-border bg-card shadow-xl; 
+    }
+
+    .card{
+        @apply bg-secondarybg shadow-md shadow-black/80;
+    }
+
+    .tab-glass{
+        @apply rounded-full bg-card border border-border;
+    }
+
+    .img-container {
+       @apply border-2 border-muted p-[0.5] rounded-full justify-center items-center;
+
+    }
+
+    .tabs-icon {
+        @apply size-12 items-center justify-center;
+    }
+
+    .tabs-glass{
+        @apply border rounded-full border-border p-2 bg-card;
+    }
+
+    .tabs-pill {
+        @apply h-12 w-14 items-center justify-center rounded-full bg-transparent;
+    }
+
+    .tabs-glyph {
+        @apply size-6;
+    }
+
+    .header-bg{
+        @apply p-4 shadow-md;
+    }
+
+    .home-header {
+        @apply flex-row items-center justify-between;
+    }
+
+    .home-user {
+        @apply flex-row items-center;
+    }
+
+    .home-avatar-container{
+        @apply border-[1.5px] border-border rounded-2xl;
+    }
+
+    .home-avatar {
+        @apply size-10 rounded-2xl;
+    }
+
+    .home-user-greeting {
+        @apply text-sm ml-2 font-sans-medium text-muted;
+    }
+
+    .home-user-name {
+        @apply ml-2 text-xl font-sans-extrabold text-foreground;
+    }
+
+    .home-icon-container {
+        @apply flex-row-reverse gap-2 justify-center items-center;
+    }
+
+    .home-balance-card {
+        @apply  justify-between gap-3 py-2 mt-1;
+    }
+
+    .home-balance-label {
+        @apply text-base font-sans-semibold text-muted;
+    }
+
+    .home-balance-amount {
+        @apply text-5xl font-sans-bold text-white;
+    }
+
+    .home-stats-container{
+        @apply my-2 flex-row gap-4 ;
+    }
+
+    .home-stats-card{
+        @apply flex-1 items-start justify-start rounded-2xl bg-card gap-2 p-2;
+    }
+
+    .home-stats-row{
+        @apply justify-between flex-row items-center gap-2;
+    }
+
+    .home-stats-icon{
+        @apply size-7 bg-accent/14 p-4 justify-center items-center rounded-full;
+    }
+
+    .home-stats-label{
+        @apply text-sm font-sans-semibold text-muted;
+    }
+
+    .home-stats-value{
+        @apply text-2xl font-sans-bold text-foreground ml-2;
+    }
+
+    .list-head {
+        @apply mb-4 flex-row items-center justify-between mt-5;
+    }
+
+    .list-title {
+        @apply text-lg font-sans-semibold text-foreground ;
+    }
+
+    .list-action {
+        @apply  px-3 flex-row items-center justify-center gap-2 py-1;
+    }
+
+    .list-action-text {
+        @apply text-base font-sans-bold text-accent/70;
+    }
+
+    .list-action-icon {
+        @apply size-3 ;
+    }
+
+    .upcoming-card {
+        @apply mr-2 mb-1 min-w-35 rounded-2xl bg-secondarybg p-3;
+    }
+
+    .upcoming-row {
+        @apply flex-row items-start justify-between gap-3;
+    }
+
+    .upcoming-icon {
+        @apply size-8 ;
+    }
+
+    .upcoming-meta{
+        @apply mt-1 ; 
+    }
+
+    .upcoming-meta-text {
+        @apply text-sm font-sans text-destructive/80;
+    }
+
+    .upcoming-name {
+        @apply  text-base font-sans-bold text-foreground;
+    }
+
+    .upcoming-price {
+        @apply text-sm font-sans-semibold text-muted;
+    }
+
+    .home-empty-state-container{
+        @apply grow mb-4 items-center ml-26 justify-start;
+    }
+
+    .home-empty-state-icon{
+        @apply size-25 opacity-70;
+    }
+
+    .home-empty-state {
+        @apply text-base font-sans-medium text-muted/80;
+    }
+    
+    .sub-card {
+        @apply  rounded-2xl p-3;
+    } 
+    
+    .sub-card-expanded {
+        @apply bg-subscription;
+    }
+
+    .sub-head {
+        @apply flex-row items-center ;
+    }
+
+    .sub-main {
+        @apply min-w-0 flex-1 flex-row items-center justify-between gap-3;
+    }
+
+    .sub-icon {
+        @apply size-11 rounded-full;
+    }
+
+    .sub-copy {
+        @apply min-w-0 flex-1;
+    }
+
+    .sub-text-head {
+        @apply mb-0 text-xl font-sans-bold text-foreground;
+    }
+
+    .sub-meta {
+        @apply text-base font-sans-light text-muted;
+    }
+
+    .sub-price-box {
+        @apply ml-3 shrink-0 items-end;
+    }
+
+    .sub-price {
+        @apply mb-0 text-base font-sans-semibold text-foreground;
+    }
+
+    .sub-billing {
+        @apply text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .sub-body {
+        @apply mt-6 gap-4;
+    }
+
+    .sub-details {
+        @apply gap-6 ml-2;
+    }
+
+    .sub-row {
+        @apply flex-row items-center justify-between gap-3;
+    }
+
+    .sub-row-copy {
+        @apply min-w-0 flex-1 flex-row items-center gap-2;
+    }
+
+    .sub-label {
+        @apply shrink-0 text-base font-sans-medium text-muted;
+    }
+
+    .sub-value {
+        @apply flex-1 font-sans-bold text-foreground;
+    }
+
+    .sub-cancel {
+        @apply mt-2 items-center rounded-full bg-primary py-4;
+    }
+
+    .sub-cancel-disabled {
+        @apply bg-primary/35;
+    }
+
+    .sub-cancel-text {
+        @apply font-sans-bold text-background;
+    }
+
+
+    .auth-safe-area {
+        @apply flex-1 bg-background p-4;
+    }
+
+    .auth-screen {
+        @apply flex-1 bg-background;
+    }
+
+    .auth-scroll {
+        @apply flex-1;
+    }
+
+    .auth-content {
+        @apply grow px-5 pb-10 pt-8;
+    }
+
+    .auth-brand-block {
+        @apply mt-6 items-center flex-row justify-center gap-3;
+    }
+
+    .auth-logo-mark {
+        @apply relative size-14 items-center justify-center rounded-2xl bg-foreground;
+    }
+
+    .auth-wordmark {
+        @apply text-3xl font-sans-extrabold text-primary;
+    }
+
+    .auth-wordmark-sub {
+        @apply mt-1 text-sm font-sans-semibold uppercase tracking-[1px] text-muted;
+    }
+
+    .auth-title-container   {
+        @apply mt-6 items-center justify-center gap-2;
+    }
+
+    .auth-title {
+        @apply text-3xl font-sans-bold text-primary;
+    }
+
+    .auth-subtitle {
+        @apply  max-w-[320px] text-center text-base font-sans-medium text-muted;
+    }
+
+    .auth-card {
+        @apply mt-8 rounded-3xl border border-border bg-card p-5;
+    }
+
+    .auth-form {
+        @apply gap-5;
+    }
+
+    .auth-field {
+        @apply gap-2;
+    }
+
+    .auth-label {
+        @apply text-lg ml-1 font-sans-semibold text-primary;
+    }
+
+    .auth-input {
+        @apply rounded-xl items-center flex bg-secondarybg p-4 text-base font-sans-medium text-primary
+        shadow-md shadow-black/80;
+    }
+
+    .auth-input-error {
+        @apply border-destructive;
+    }
+
+    .auth-error {
+        @apply text-xs font-sans-medium text-destructive mt-[-10px];
+    }
+
+    .auth-helper {
+        @apply text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .auth-button {
+        @apply mt-3 items-center rounded-full bg-accent py-4;
+    }
+
+    .auth-button-disabled {
+        @apply bg-accent/45 text-muted;
+    }
+
+    .auth-button-text {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .auth-secondary-button {
+        @apply items-center rounded-2xl border border-accent/30 bg-accent/10 py-3;
+    }
+
+    .auth-secondary-button-text {
+        @apply text-sm font-sans-semibold text-accent;
+    }
+
+    .auth-divider-row {
+        @apply my-4 flex-row items-center gap-3;
+    }
+
+    .auth-divider-text {
+        @apply text-[11px] font-sans-semibold uppercase tracking-[1px] text-muted-foreground;
+    }
+
+    .auth-link-row {
+        @apply mt-3 flex-row items-center justify-center gap-1;
+    }
+
+    .auth-link-copy {
+        @apply text-sm font-sans-medium text-muted;
+    }
+
+    .auth-link {
+        @apply text-sm font-sans-bold text-accent;
+    }
+
+    .modal-overlay {
+        @apply flex-1 bg-black/50;
+    }
+
+    .modal-container {
+        @apply mt-auto max-h-[85%] rounded-t-3xl bg-background;
+    }
+
+    .modal-header {
+        @apply flex-row items-center justify-between border-b border-border px-5 py-4;
+    }
+
+    .modal-title {
+        @apply text-xl font-sans-bold text-primary;
+    }
+
+    .modal-close {
+        @apply size-10 items-center justify-center rounded-full bg-accent;
+    }
+
+    .modal-close-text {
+        @apply text-lg font-sans text-foreground;
+    }
+
+    .modal-body {
+        @apply gap-5 p-5;
+    }
+
+    .picker-row {
+        @apply flex-row gap-3;
+    }
+
+    .picker-option {
+        @apply flex-1 items-center rounded-2xl border border-border bg-background py-3;
+    }
+
+    .picker-option-active {
+        @apply border-accent bg-accent/10;
+    }
+
+    .picker-option-text {
+        @apply text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .picker-option-text-active {
+        @apply text-accent;
+    }
+
+    .category-scroll {
+        @apply flex-row flex-wrap gap-2;
+    }
+
+    .category-chip {
+        @apply rounded-full border border-border bg-background px-4 py-2;
+    }
+
+    .category-chip-active {
+        @apply border-accent bg-accent/10;
+    }
+
+    .category-chip-text {
+        @apply text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .category-chip-text-active {
+        @apply text-accent;
+    } 
+}
