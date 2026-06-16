@@ -9,21 +9,22 @@ import {
   KeyboardAvoidingView,
   Platform,
   Text,
-  TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 
 const Subscriptions = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
+    string | null
+  >(null);
+  const [activeTab, setActiveTab] = useState<string>("Monthly");
+
+  const tabs = ["Monthly", "Yearly", "Cancelled"];
 
   const filteredSubscriptions = HOME_SUBSCRIPTIONS.filter((sub) => {
-    return (
-      sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sub.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sub.plan?.toLowerCase().includes(searchQuery.toLowerCase()) 
-      
-    );
+    return activeTab === "Cancelled"
+      ? sub.status === "cancelled"
+      : sub.billing === activeTab && sub.status !== "cancelled";
   });
 
   return (
@@ -33,20 +34,33 @@ const Subscriptions = () => {
         className="flex-1"
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
-        <View className="px-4 pt-5 pb-4">
-          <Text className="text-3xl font-sans-extrabold text-foreground mb-6">
+        <View className="px-4 pt-8 pb-2">
+          <Text className="text-3xl font-sans-extrabold text-foreground mb-10">
             All Subscriptions
           </Text>
 
-          <View className="bg-card border border-border h-14 rounded-3xl px-4 justify-center shadow-sm">
-            <TextInput
-              placeholder="Search subscriptions..."
-              placeholderTextColor="rgba(142, 142, 147, 0.7)"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              autoCorrect={false}
-              className="text-base font-sans-medium text-foreground"
-            />
+          <View className="flex-row">
+            {tabs.map((tab) => (
+              <TouchableOpacity
+                key={tab}
+                onPress={() => setActiveTab(tab)}
+                className={`flex-1 py-2 items-center rounded-md border ${
+                  activeTab === tab
+                    ? "bg-accent border-accent"
+                    : "bg-card "
+                }`}
+              >
+                <Text
+                  className={`font-sans-semibold ${
+                    activeTab === tab
+                      ? "text-background"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {tab}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
@@ -64,18 +78,22 @@ const Subscriptions = () => {
               }
             />
           )}
-          contentContainerClassName=" pb-32 pt-1"
+          contentContainerClassName=" pb-32 pt-4"
           ItemSeparatorComponent={() => <View className="h-4" />}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           ListEmptyComponent={
             <View className=" flex items-center justify-center ">
               <Image
-                source={icons.notfound}
-                className="h-60 w-60 opacity-40 mt-10"
+                source={icons.uptodate}
+                className="h-50 w-50 opacity-40 mt-10"
               />
-              <Text className="text-lg font-sans-semibold text-muted opacity-50">
-                No Subscriptions Found
+              <Text className="text-lg font-sans text-muted opacity-90">
+                No {activeTab} Subscriptions.
+              </Text>
+              <Text className="text-sm font-sans-light px-18 mt-1 text-muted opacity-50 text-center">
+                You do not have any {activeTab.toLowerCase()} subscriptions yet.
+                Create one to track it here.
               </Text>
             </View>
           }

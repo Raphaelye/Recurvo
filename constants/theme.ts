@@ -8,6 +8,7 @@ export const colors = {
 
     card: "rgba(225, 225, 225, 0.06)",
     border: "rgba(225, 225, 225, 0.1)",
+    tabbar: "rgba(0,0,0, 0.1)"
     
 } as const;
 

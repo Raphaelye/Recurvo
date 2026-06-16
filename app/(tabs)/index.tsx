@@ -84,9 +84,9 @@ export default function App() {
                 contentContainerClassName="mb-2"
                 ListEmptyComponent={
                   <View className="home-empty-state-container">
-                    <Image source={icons.notfound} className="home-empty-state-icon" />
+                    <Image source={icons.uptodate} className="home-empty-state-icon" />
                     <Text className="home-empty-state">
-                      NO UPCOMING RENEWALS!!
+                      NO UPCOMING SUBSCRIPTIONS!!
                     </Text>
                   </View>
                 }
@@ -114,7 +114,7 @@ export default function App() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View className="home-empty-state-container">
-              <Image source={icons.oops} className="home-empty-state-icon" />
+              <Image source={icons.uptodate} className="home-empty-state-icon" />
               <Text className="home-empty-state">NO ACTIVE SUBSCRIPTION!!</Text>
             </View>
           }

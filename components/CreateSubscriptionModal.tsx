@@ -2,17 +2,18 @@ import { icons } from "@/constants/icons";
 import { colors } from "@/constants/theme";
 import { clsx } from "clsx";
 import dayjs from "dayjs";
+import { usePostHog } from "posthog-react-native";
 import React, { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    Image
+  Image,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const CATEGORIES = [
@@ -26,12 +27,17 @@ const CATEGORIES = [
   "Other",
 ];
 
-
-const CreateSubscriptionModal = ({ visible, onClose, onAdd }: CreateSubscriptionModal) => {
+const CreateSubscriptionModal = ({
+  visible,
+  onClose,
+  onAdd,
+}: CreateSubscriptionModal) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [frequency, setFrequency] = useState<"Monthly" | "Yearly">("Monthly");
   const [category, setCategory] = useState("Entertainment");
+  const posthog = usePostHog();
 
   const handleSubmit = () => {
     const numericPrice = parseFloat(price);
@@ -45,6 +51,7 @@ const CreateSubscriptionModal = ({ visible, onClose, onAdd }: CreateSubscription
       name,
       price: numericPrice,
       billing: frequency,
+      paymentMethod,
       category,
       status: "active",
       startDate,
@@ -52,6 +59,16 @@ const CreateSubscriptionModal = ({ visible, onClose, onAdd }: CreateSubscription
       icon: icons.wallet,
       currency: "USD",
     };
+
+    // Track subscription creation event
+    posthog.capture("subscription_created", {
+      subscription_name: name,
+      subscription_price: numericPrice,
+      billing_frequency: frequency,
+      payment_method: paymentMethod,
+      category: category,
+      currency: "USD",
+    });
 
     onAdd(newSub);
     resetForm();
@@ -61,6 +78,7 @@ const CreateSubscriptionModal = ({ visible, onClose, onAdd }: CreateSubscription
   const resetForm = () => {
     setName("");
     setPrice("");
+    setPaymentMethod("");
     setFrequency("Monthly");
     setCategory("Entertainment");
   };
@@ -84,20 +102,23 @@ const CreateSubscriptionModal = ({ visible, onClose, onAdd }: CreateSubscription
           <View className="modal-header">
             <Text className="modal-title">New Subscription</Text>
             <TouchableOpacity onPress={onClose} className="modal-close">
-              <Image className="modal-close-text home-add-icon" 
-                style={{  
-                  width:18, 
-                  height:18,
+              <Image
+                className="modal-close-text home-add-icon"
+                style={{
+                  width: 18,
+                  height: 18,
                   tintColor: colors.foreground,
-                }} 
-                source={icons.close} 
+                }}
+                source={icons.close}
               />
             </TouchableOpacity>
           </View>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <ScrollView contentContainerClassName="modal-body pb-10">
+            <ScrollView contentContainerClassName="modal-body pb-35"
+              showsVerticalScrollIndicator= {false}
+            >
               <View className="auth-field">
                 <Text className="auth-label">Name</Text>
                 <TextInput
@@ -119,6 +140,17 @@ const CreateSubscriptionModal = ({ visible, onClose, onAdd }: CreateSubscription
                   className="auth-input"
                 />
               </View>
+              <View className="auth-field">
+                <Text className="auth-label">Payment Method</Text>
+                <TextInput
+                  value={paymentMethod}
+                  onChangeText={setPaymentMethod}
+                  placeholder="Gray Visa Card"
+                  placeholderTextColor="rgba(142, 142, 147, 0.7)"
+                  className="auth-input"
+                />
+              </View>
+
               <View className="auth-field">
                 <Text className="auth-label">Frequency</Text>
                 <View className="picker-row">
@@ -143,7 +175,7 @@ const CreateSubscriptionModal = ({ visible, onClose, onAdd }: CreateSubscription
                   ))}
                 </View>
               </View>
-              
+
               <View className="auth-field">
                 <Text className="auth-label">Category</Text>
                 <ScrollView

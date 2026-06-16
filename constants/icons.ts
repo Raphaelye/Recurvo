@@ -16,8 +16,8 @@ import plus from "@/assets/icons/plus.png";
 import setting from "@/assets/icons/setting.png";
 import spotify from "@/assets/icons/spotify.png";
 import wallet from "@/assets/icons/wallet.png";
-import oops from "@/assets/icons/oops.png";
 
+import uptodate from "@/assets/icons/uptodate.png";
 import notfound from "@/assets/icons/notfound.png";
 import close from "@/assets/icons/close.png";
 import rightarrow from "@/assets/icons/rightarrow.png";
@@ -45,13 +45,13 @@ export const icons = {
     github,
     claude,
     canva,
-    oops,
     notfound,
     close,
     rightarrow,
     notification,
     barchart,
     trend,
+    uptodate,
 } as const;
 
 export type IconKey = keyof typeof icons;

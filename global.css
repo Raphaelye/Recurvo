@@ -176,7 +176,7 @@
     }
 
     .list-action-icon {
-        @apply size-3 ;
+        @apply size-3;
     }
 
     .upcoming-card {
@@ -188,11 +188,11 @@
     }
 
     .upcoming-icon {
-        @apply size-8 ;
+        @apply size-8;
     }
 
     .upcoming-meta{
-        @apply mt-1 ; 
+        @apply mt-1; 
     }
 
     .upcoming-meta-text {
@@ -228,15 +228,15 @@
     }
 
     .sub-head {
-        @apply flex-row items-center ;
+        @apply flex-row items-center justify-between gap-3;
     }
 
     .sub-main {
-        @apply min-w-0 flex-1 flex-row items-center justify-between gap-3;
+        @apply min-w-0 flex-1 flex-row items-center justify-between ;
     }
 
     .sub-icon {
-        @apply size-11 rounded-full;
+        @apply size-10 rounded-full;
     }
 
     .sub-copy {
@@ -244,7 +244,7 @@
     }
 
     .sub-text-head {
-        @apply mb-0 text-xl font-sans-bold text-foreground;
+        @apply mb-0 text-lg font-sans-bold text-foreground;
     }
 
     .sub-meta {
@@ -268,7 +268,7 @@
     }
 
     .sub-details {
-        @apply gap-6 ml-2;
+        @apply gap-4 ml-2;
     }
 
     .sub-row {
@@ -299,7 +299,6 @@
         @apply font-sans-bold text-background;
     }
 
-
     .auth-safe-area {
         @apply flex-1 bg-background p-4;
     }
@@ -313,7 +312,7 @@
     }
 
     .auth-content {
-        @apply grow px-5 pb-10 pt-8;
+        @apply grow px-5 pb-10 mt-8;
     }
 
     .auth-brand-block {
@@ -321,19 +320,19 @@
     }
 
     .auth-logo-mark {
-        @apply relative size-14 items-center justify-center rounded-2xl bg-foreground;
+        @apply relative size-14 items-center justify-center rounded-2xl ;
     }
 
     .auth-wordmark {
-        @apply text-3xl font-sans-extrabold text-primary;
+        @apply text-4xl font-sans-extrabold text-primary;
     }
 
     .auth-wordmark-sub {
-        @apply mt-1 text-sm font-sans-semibold uppercase tracking-[1px] text-muted;
+        @apply mt-1 text-[10px] font-sans-semibold uppercase tracking-[1px] text-muted;
     }
 
     .auth-title-container   {
-        @apply mt-6 items-center justify-center gap-2;
+        @apply mt-15 items-center justify-center gap-2;
     }
 
     .auth-title {
@@ -342,10 +341,6 @@
 
     .auth-subtitle {
         @apply  max-w-[320px] text-center text-base font-sans-medium text-muted;
-    }
-
-    .auth-card {
-        @apply mt-8 rounded-3xl border border-border bg-card p-5;
     }
 
     .auth-form {
@@ -362,7 +357,7 @@
 
     .auth-input {
         @apply rounded-xl items-center flex bg-secondarybg p-4 text-base font-sans-medium text-primary
-        shadow-md shadow-black/80;
+        shadow-sm;
     }
 
     .auth-input-error {

@@ -136,6 +136,7 @@ export default function Page() {
           <ScrollView
             contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
             keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
             {renderAuthCard(
               "Verify your account",
@@ -196,14 +197,13 @@ export default function Page() {
   }
 
   return (
-    <StyledSafeAreaView className="auth-safe-area">
+    <StyledSafeAreaView className="auth-safe-area f">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         <ScrollView
-          className="flex-1"
-          contentContainerClassName="auth-scroll"
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -213,7 +213,7 @@ export default function Page() {
             </View>
             <View>
               <Text className="auth-wordmark">Recurvo</Text>
-              <Text className="auth-wordmark-sub">Smart Billing</Text>
+              <Text className="auth-wordmark-sub">Manage Recurring Bills</Text>
             </View>
           </View>
 
@@ -227,7 +227,7 @@ export default function Page() {
           <View className="auth-content">
             <View className="auth-form">
               <View className="auth-field">
-                <Text className="auth-label">Email address</Text>
+                <Text className="auth-label">Email </Text>
                 <TextInput
                   className="auth-input"
                   autoCapitalize="none"

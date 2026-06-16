@@ -61,6 +61,7 @@ const TabLayout = () => {
           borderTopWidth:0,
           elevation: 0,
           overflow: "hidden",
+          backgroundColor: colors.tabbar,
         },
 
         tabBarItemStyle: {

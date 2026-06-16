@@ -60,7 +60,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
         currency: "USD",
         billing: "Monthly",
         renewalDate: "2026-03-20T10:00:00.000Z",
-        color: "#f5c542",
     },
     {
         id: "github-pro",
@@ -75,7 +74,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
         currency: "USD",
         billing: "Monthly",
         renewalDate: "2026-03-24T10:00:00.000Z",
-        color: "#e8def8",
     },
     {
         id: "claude-pro",
@@ -84,13 +82,12 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
         plan: "Pro Plan",
         category: "AI Tools",
         paymentMethod: "Amex ending in 1010",
-        status: "paused",
+        status: "active",
         startDate: "2025-06-27T10:00:00.000Z",
         price: 20.0,
         currency: "USD",
-        billing: "Monthly",
+        billing: "Yearly",
         renewalDate: "2026-03-27T10:00:00.000Z",
-        color: "#b8d4e3",
     },
     {
         id: "canva-pro",
@@ -105,7 +102,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
         currency: "USD",
         billing: "Yearly",
         renewalDate: "2026-04-02T10:00:00.000Z",
-        color: "#b8e8d0",
     },
 ];
 

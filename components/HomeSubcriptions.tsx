@@ -1,3 +1,5 @@
+import { icons } from "@/constants/icons";
+import { colors } from "@/constants/theme";
 import { formatCurrency, formatStatusLabel, formatSubscriptionDateTime } from "@/lib/utils";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
@@ -20,17 +22,17 @@ const HomeSubcriptions = ({
     return (
 
         <View className="px-4">
-            <Pressable onPress={onPress} className="sub-card border-b border-muted/10 "> 
+            <View  className="sub-card border-b border-border "> 
                 <View className="sub-head">
                     <View className="img-container">
                         <Image source={icon} className="sub-icon" />
                     </View>
                     <View className="sub-main">
-                        <View className="ml-3">
+                        <View>
                             <Text
-                            className="sub-text-head"
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
+                                className="sub-text-head"
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
                             >
                             {name}
                             </Text>
@@ -46,6 +48,15 @@ const HomeSubcriptions = ({
                             <Text className="sub-meta">{billing}</Text>
                         </View>
                     </View>
+                    <Pressable onPress={onPress} className = "p-1 bg-border ml-2 rounded-md">
+                        <Image 
+                            source={icons.menu} 
+                            style = {{
+                                tintColor: colors.foreground,
+                            }}
+                            className = "h-5 w-5"
+                        /> 
+                    </Pressable>
                 </View>
 
                 {expanded && 
@@ -94,7 +105,7 @@ const HomeSubcriptions = ({
                         </View>
                     </View>
                 }
-            </Pressable>
+            </View>
         </View>
     );
 };
