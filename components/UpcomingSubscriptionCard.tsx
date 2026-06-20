@@ -10,12 +10,12 @@ const UpcomingSubscriptionCard = ({ name, price, daysLeft, icon, currency }:Upco
                 <View className="img-container">
                     <Image source={icon} className="upcoming-icon" />
                 </View>
-
-                <View>
-                    <Text className="upcoming-name" numberOfLines={1}>{name}</Text>
-                    <Text className="upcoming-price">{formatCurrency(price, currency)}</Text>
+                <View className='flex-1'>
+                    <Text className="upcoming-name" ellipsizeMode='tail' numberOfLines={1}>{name}</Text>
+                    <Text className="upcoming-price">{formatCurrency(price, currency)}</Text>   
                 </View>
             </View>
+
             <View className=" upcoming-meta">
                 <Text className="upcoming-meta-text " numberOfLines={1}>
                     {daysLeft > 1 ? `${daysLeft} days left` : 'Last day'}

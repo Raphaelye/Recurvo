@@ -20,7 +20,6 @@ const HomeSubcriptions = ({
   onPress,
 }: SubscriptionCardProps) => {
     return (
-
         <View className="px-4">
             <View  className="sub-card border-b border-border "> 
                 <View className="sub-head">
