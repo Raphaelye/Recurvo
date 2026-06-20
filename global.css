@@ -140,7 +140,7 @@
     }
 
     .home-stats-card{
-        @apply flex-1 items-start justify-start rounded-2xl bg-card gap-2 p-2;
+        @apply flex-1 items-start justify-start rounded-2xl bg-secondarybg gap-2 p-2 border border-border;
     }
 
     .home-stats-row{
@@ -164,7 +164,7 @@
     }
 
     .list-title {
-        @apply text-lg font-sans-semibold text-foreground ;
+        @apply text-xl font-sans-semibold text-muted ;
     }
 
     .list-action {
@@ -180,11 +180,11 @@
     }
 
     .upcoming-card {
-        @apply mr-2 mb-1 min-w-35 rounded-2xl bg-secondarybg p-3;
+        @apply mr-2 mb-2 w-40 rounded-2xl bg-secondarybg p-3;
     }
 
     .upcoming-row {
-        @apply flex-row items-start justify-between gap-3;
+        @apply flex-row  items-start justify-between gap-3;
     }
 
     .upcoming-icon {
@@ -192,7 +192,7 @@
     }
 
     .upcoming-meta{
-        @apply mt-1; 
+        @apply mt-2; 
     }
 
     .upcoming-meta-text {
@@ -200,7 +200,7 @@
     }
 
     .upcoming-name {
-        @apply  text-base font-sans-bold text-foreground;
+        @apply text-base font-sans-bold text-foreground truncate;
     }
 
     .upcoming-price {
@@ -264,11 +264,11 @@
     }
 
     .sub-body {
-        @apply mt-6 gap-4;
+        @apply mt-6 gap-4 border-t border-border pt-4;
     }
 
     .sub-details {
-        @apply gap-4 ml-2;
+        @apply gap-4 ml-2 ;
     }
 
     .sub-row {
@@ -384,6 +384,10 @@
         @apply text-base font-sans-bold text-primary;
     }
 
+    .auth-button-text-disabled {
+        @apply text-muted;
+    }
+
     .auth-secondary-button {
         @apply items-center rounded-2xl border border-accent/30 bg-accent/10 py-3;
     }
@@ -445,7 +449,7 @@
     }
 
     .picker-option {
-        @apply flex-1 items-center rounded-2xl border border-border bg-background py-3;
+        @apply rounded-2xl border p-3 border-border bg-background py-3;
     }
 
     .picker-option-active {

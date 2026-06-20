@@ -4,36 +4,48 @@ import HomeSubcriptions from "@/components/HomeSubcriptions";
 import ListHeading from "@/components/ListHeading";
 import { StyledSafeAreaView } from "@/components/StyledSafeAreaView";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
-import { HOME_SUBSCRIPTIONS, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
+import { colors } from "@/constants/theme";
+import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import { formatCurrency } from "@/lib/utils";
+import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
-import {colors} from "@/constants/theme";
 
 export default function App() {
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
-  const [subscriptions, setSubscriptions] = useState(HOME_SUBSCRIPTIONS);
+  const subscriptions = useSubscriptionsStore((state) => state.subscriptions);
+  const addSubscription = useSubscriptionsStore((state) => state.addSubscription);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const router = useRouter();
 
-  const handleAddSubscription = (newSub: Subscription) => {
-    HOME_SUBSCRIPTIONS.unshift(newSub); // Mutate constant for other screens
-    setSubscriptions([newSub, ...subscriptions]); // Update local state for immediate UI refresh
-  };
+  const upcomingSubscriptions: UpcomingSubscription[] = subscriptions.filter((sub) => sub.renewalDate && sub.status === "active")
+    .map((sub) => ({
+      id: sub.id,
+      icon: sub.icon,
+      name: sub.name,
+      price: sub.price,
+      currency: sub.currency || "USD",
+      daysLeft: Math.max(0, dayjs(sub.renewalDate!).diff(dayjs(), "day")),
+    }))
+    .filter((u) => u.daysLeft < 5);
 
   return (
     <>
-      <StyledSafeAreaView className="flex-1 bg-background">
+      <StyledSafeAreaView className="flex-1 pb-10 bg-background">
         <HomeHeader onAddPress={() => setIsModalVisible(true)} />
         <FlatList
+          extraData={subscriptions}
           ListHeaderComponent={() => (
             <View className="px-4">
               <View className="home-balance-card">
                 <Text className="home-balance-label">Total Monthly Spend</Text>
                 <Text className="home-balance-amount">
-                  {formatCurrency(subscriptions.reduce((total, sub) => total + sub.price, 0), "USD")}
+                  {formatCurrency(
+                    subscriptions.reduce((total, sub) => total + sub.price, 0),
+                    "USD",
+                  )}
                 </Text>
               </View>
 
@@ -41,40 +53,52 @@ export default function App() {
                 <View className="home-stats-card">
                   <View className="home-stats-row">
                     <View className="home-stats-icon">
-                      <Image source={icons.barchart} className="w-4 h-4" style={{ tintColor: colors.accent }}/>
+                      <Image
+                        source={icons.barchart}
+                        className="w-4 h-4"
+                        style={{ tintColor: colors.accent }}
+                      />
                     </View>
-                    <Text className= "home-stats-label">ACTIVE</Text>
+                    <Text className="home-stats-label">ACTIVE</Text>
                   </View>
 
                   <Text className="home-stats-value">
-                    {subscriptions.filter((sub) => sub.status === "active").length}
+                    {
+                      subscriptions.filter((sub) => sub.status === "active")
+                        .length
+                    }
                   </Text>
                 </View>
                 <View className="home-stats-card">
                   <View className="home-stats-row">
                     <View className="home-stats-icon">
-                      <Image source={icons.trend} className="w-4 h-4" style={{ tintColor: colors.accent }}/>
+                      <Image
+                        source={icons.trend}
+                        className="w-4 h-4"
+                        style={{ tintColor: colors.accent }}
+                      />
                     </View>
-                    <Text className= "home-stats-label">AVG. COST</Text>
+                    <Text className="home-stats-label">AVG. COST</Text>
                   </View>
 
                   <Text className="home-stats-value">
                     {formatCurrency(
-                      subscriptions.reduce((total, sub) => total + sub.price, 0) / subscriptions.length || 0,
-                      "USD"
+                      subscriptions.reduce(
+                        (total, sub) => total + sub.price,
+                        0,
+                      ) / subscriptions.length || 0,
+                      "USD",
                     )}
                   </Text>
                 </View>
-
               </View>
 
               <View className="list-head">
                 <Text className="list-title">Upcoming Subscriptions</Text>
               </View>
 
-
               <FlatList
-                data={UPCOMING_SUBSCRIPTIONS}
+                data={upcomingSubscriptions}
                 renderItem={({ item }) => (
                   <UpcomingSubscriptionCard {...item} />
                 )}
@@ -84,7 +108,10 @@ export default function App() {
                 contentContainerClassName="mb-2"
                 ListEmptyComponent={
                   <View className="home-empty-state-container">
-                    <Image source={icons.uptodate} className="home-empty-state-icon" />
+                    <Image
+                      source={icons.uptodate}
+                      className="home-empty-state-icon"
+                    />
                     <Text className="home-empty-state">
                       NO UPCOMING SUBSCRIPTIONS!!
                     </Text>
@@ -104,8 +131,7 @@ export default function App() {
             <HomeSubcriptions
               {...item}
               expanded={expandedSubscriptionId === item.id}
-              onPress={() =>
-                setExpandedSubscriptionId((currentId) =>
+              onPress={() => setExpandedSubscriptionId((currentId) =>
                   currentId === item.id ? null : item.id,
                 )
               }
@@ -114,19 +140,20 @@ export default function App() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View className="home-empty-state-container">
-              <Image source={icons.uptodate} className="home-empty-state-icon" />
+              <Image
+                source={icons.uptodate}
+                className="home-empty-state-icon"
+              />
               <Text className="home-empty-state">NO ACTIVE SUBSCRIPTION!!</Text>
             </View>
           }
-          // ItemSeparatorComponent={() => <View className="h-2" />}
           contentContainerClassName="pb-30"
-          extraData={expandedSubscriptionId}
         />
       </StyledSafeAreaView>
       <CreateSubscriptionModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
-        onAdd={handleAddSubscription}
+        onAdd={addSubscription}
       />
     </>
   );

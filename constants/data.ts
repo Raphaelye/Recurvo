@@ -19,32 +19,7 @@ export const HOME_BALANCE = {
     nextRenewalDate: "2026-04-24T09:00:00.000Z",
 };
 
-export const UPCOMING_SUBSCRIPTIONS: UpcomingSubscription[] = [
-    {
-        id: "spotify",
-        icon: icons.spotify,
-        name: "Spotify",
-        price: 5.99,
-        currency: "USD",
-        daysLeft: 20,
-    },
-    {
-        id: "notion",
-        icon: icons.notion,
-        name: "Notion",
-        price: 12.0,
-        currency: "USD",
-        daysLeft: 4,
-    },
-    {
-        id: "figma",
-        icon: icons.figma,
-        name: "Figma",
-        price: 15.0,
-        currency: "USD",
-        daysLeft: 6,
-    },
-];
+
 
 export const HOME_SUBSCRIPTIONS: Subscription[] = [
     {
@@ -55,7 +30,7 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
         category: "Design",
         paymentMethod: "Visa ending in 8530",
         status: "active",
-        startDate: "2025-03-20T10:00:00.000Z",
+        startDate: "2026-03-20T10:00:00.000Z",
         price: 90.49,
         currency: "USD",
         billing: "Monthly",

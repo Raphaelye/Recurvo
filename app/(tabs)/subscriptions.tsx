@@ -1,16 +1,16 @@
 import HomeSubcriptions from "@/components/HomeSubcriptions";
 import { StyledSafeAreaView } from "@/components/StyledSafeAreaView";
-import { HOME_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
+import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import React, { useState } from "react";
 import {
-  FlatList,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const Subscriptions = () => {
@@ -18,17 +18,18 @@ const Subscriptions = () => {
     string | null
   >(null);
   const [activeTab, setActiveTab] = useState<string>("Monthly");
+  const subscriptions = useSubscriptionsStore((state) => state.subscriptions);
 
   const tabs = ["Monthly", "Yearly", "Cancelled"];
 
-  const filteredSubscriptions = HOME_SUBSCRIPTIONS.filter((sub) => {
+  const filteredSubscriptions = subscriptions.filter((sub) => {
     return activeTab === "Cancelled"
       ? sub.status === "cancelled"
       : sub.billing === activeTab && sub.status !== "cancelled";
   });
 
   return (
-    <StyledSafeAreaView className="flex-1 bg-background">
+    <StyledSafeAreaView className="flex-1 pb-10 bg-background">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -45,9 +46,7 @@ const Subscriptions = () => {
                 key={tab}
                 onPress={() => setActiveTab(tab)}
                 className={`flex-1 py-2 items-center rounded-md border ${
-                  activeTab === tab
-                    ? "bg-accent border-accent"
-                    : "bg-card "
+                  activeTab === tab ? "bg-accent border-accent" : "bg-card "
                 }`}
               >
                 <Text

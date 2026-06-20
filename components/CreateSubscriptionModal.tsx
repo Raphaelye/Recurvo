@@ -1,10 +1,12 @@
 import { icons } from "@/constants/icons";
 import { colors } from "@/constants/theme";
+import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import { clsx } from "clsx";
 import dayjs from "dayjs";
 import { usePostHog } from "posthog-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Modal,
@@ -27,6 +29,23 @@ const CATEGORIES = [
   "Other",
 ];
 
+type BillingFrequency =
+  | "Weekly"
+  | "Bi-weekly"
+  | "Monthly"
+  | "Quarterly"
+  | "Semi-yearly"
+  | "Yearly";
+
+const FREQUENCY_OPTIONS: BillingFrequency[] = [
+  "Weekly",
+  "Bi-weekly",
+  "Monthly",
+  "Quarterly",
+  "Semi-yearly",
+  "Yearly",
+];
+
 const CreateSubscriptionModal = ({
   visible,
   onClose,
@@ -35,45 +54,9 @@ const CreateSubscriptionModal = ({
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [frequency, setFrequency] = useState<"Monthly" | "Yearly">("Monthly");
+  const [frequency, setFrequency] = useState<BillingFrequency>("Monthly");
   const [category, setCategory] = useState("Entertainment");
   const posthog = usePostHog();
-
-  const handleSubmit = () => {
-    const numericPrice = parseFloat(price);
-    if (!name.trim() || isNaN(numericPrice) || numericPrice <= 0) return;
-
-    const startDate = dayjs().toISOString();
-    const renewalDate = dayjs().add(1, frequency === "Monthly" ? "month" : "year").toISOString();
-
-    const newSub: Subscription = {
-      id: `sub-${Date.now()}`,
-      name,
-      price: numericPrice,
-      billing: frequency,
-      paymentMethod,
-      category,
-      status: "active",
-      startDate,
-      renewalDate,
-      icon: icons.wallet,
-      currency: "USD",
-    };
-
-    // Track subscription creation event
-    posthog.capture("subscription_created", {
-      subscription_name: name,
-      subscription_price: numericPrice,
-      billing_frequency: frequency,
-      payment_method: paymentMethod,
-      category: category,
-      currency: "USD",
-    });
-
-    onAdd(newSub);
-    resetForm();
-    onClose();
-  };
 
   const resetForm = () => {
     setName("");
@@ -83,7 +66,104 @@ const CreateSubscriptionModal = ({
     setCategory("Entertainment");
   };
 
-  const isValid = name.trim().length > 0 && parseFloat(price) > 0;
+  const generateId = () =>
+    `sub-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  useEffect(() => {
+    if (!visible) {
+      resetForm();
+    }
+  }, [visible]);
+
+  const handleSubmit = () => {
+    const numericPrice = parseFloat(price);
+    if (!name.trim() || isNaN(numericPrice) || numericPrice <= 0) return;
+
+    const existing = useSubscriptionsStore
+      .getState()
+      .subscriptions.some(
+        (sub) => sub.name.trim().toLowerCase() === name.trim().toLowerCase(),
+      );
+
+    const submit = () => {
+      const startDate = dayjs().toISOString();
+
+      const renewalDate = dayjs().add(frequency === "Weekly"
+            ? 1
+            : frequency === "Bi-weekly"
+              ? 2
+              : frequency === "Monthly"
+                ? 1
+                : frequency === "Quarterly"
+                  ? 3
+                  : frequency === "Semi-yearly"
+                    ? 6
+                    : 1,
+          frequency === "Weekly" || frequency === "Bi-weekly"
+            ? "week"
+            : frequency === "Yearly"
+              ? "year"
+              : "month",
+        ).toISOString();
+
+      const newSub: Subscription = {
+        id: generateId(),
+        name,
+        price: numericPrice,
+        billing: frequency,
+        paymentMethod,
+        category,
+        status: "active",
+        startDate,
+        renewalDate,
+        icon: icons.wallet,
+        currency: "USD",
+      };
+
+      // Track subscription creation event
+      posthog.capture("subscription_created", {
+        subscription_name: name,
+        subscription_price: numericPrice,
+        billing_frequency: frequency,
+        payment_method: paymentMethod,
+        category: category,
+        currency: "USD",
+      });
+
+      onAdd(newSub);
+      handleClose();
+    };
+
+    if (existing) {
+      Alert.alert(
+        "Duplicate subscription",
+        `${name.trim()} already exists. Do you want to add it anyway?`,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Continue",
+            onPress: submit,
+          },
+        ],
+      );
+      return;
+    }
+
+    submit();
+  };
+
+  const isValid =
+    name.trim().length > 0 &&
+    parseFloat(price) > 0 &&
+    paymentMethod.trim().length > 0;
 
   return (
     <Modal
@@ -95,7 +175,7 @@ const CreateSubscriptionModal = ({
       <View className="modal-overlay justify-end">
         <TouchableOpacity
           className="flex-1"
-          onPress={onClose}
+          onPress={handleClose}
           activeOpacity={1}
         />
         <View className="modal-container">
@@ -116,8 +196,9 @@ const CreateSubscriptionModal = ({
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <ScrollView contentContainerClassName="modal-body pb-35"
-              showsVerticalScrollIndicator= {false}
+            <ScrollView
+              contentContainerClassName="modal-body pb-35"
+              showsVerticalScrollIndicator={false}
             >
               <View className="auth-field">
                 <Text className="auth-label">Name</Text>
@@ -131,15 +212,21 @@ const CreateSubscriptionModal = ({
               </View>
               <View className="auth-field">
                 <Text className="auth-label">Price</Text>
-                <TextInput
-                  value={price}
-                  onChangeText={setPrice}
-                  keyboardType="decimal-pad"
-                  placeholder="0.00"
-                  placeholderTextColor="rgba(142, 142, 147, 0.7)"
-                  className="auth-input"
-                />
+                <View className="flex-row flex-1 items-center justify-between gap-5">
+                  <TextInput
+                    value={price}
+                    onChangeText={setPrice}
+                    keyboardType="decimal-pad"
+                    placeholder="0.00"
+                    placeholderTextColor="rgba(142, 142, 147, 0.7)"
+                    className="auth-input flex-[0.8]"
+                  />
+                  <Text className="flex-[0.2] text-lg text-foreground font-sans-bold ">
+                    USD $
+                  </Text>
+                </View>
               </View>
+
               <View className="auth-field">
                 <Text className="auth-label">Payment Method</Text>
                 <TextInput
@@ -153,8 +240,12 @@ const CreateSubscriptionModal = ({
 
               <View className="auth-field">
                 <Text className="auth-label">Frequency</Text>
-                <View className="picker-row">
-                  {(["Monthly", "Yearly"] as const).map((opt) => (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerClassName="category-scroll"
+                >
+                  {FREQUENCY_OPTIONS.map((opt) => (
                     <TouchableOpacity
                       key={opt}
                       onPress={() => setFrequency(opt)}
@@ -173,7 +264,7 @@ const CreateSubscriptionModal = ({
                       </Text>
                     </TouchableOpacity>
                   ))}
-                </View>
+                </ScrollView>
               </View>
 
               <View className="auth-field">
@@ -212,7 +303,14 @@ const CreateSubscriptionModal = ({
                   !isValid && "auth-button-disabled",
                 )}
               >
-                <Text className="auth-button-text">Add Subscription</Text>
+                <Text
+                  className={clsx(
+                    "auth-button-text",
+                    !isValid && "auth-button-text-disabled",
+                  )}
+                >
+                  Add Subscription
+                </Text>
               </TouchableOpacity>
             </ScrollView>
           </KeyboardAvoidingView>

@@ -65,12 +65,15 @@ declare global {
         description: string;
     }
 
-
-
     interface CreateSubscriptionModal{
         visible: boolean;
         onClose: () => void;
         onAdd: (sub: Subscription) => void;
+    }
+    
+    interface SubscriptionsStore {
+        subscriptions: Subscription[];
+        addSubscription: (subscription: Subscription) => void;
     }
 }
 
