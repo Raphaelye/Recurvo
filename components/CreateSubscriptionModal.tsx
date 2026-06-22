@@ -37,6 +37,23 @@ type BillingFrequency =
   | "Semi-yearly"
   | "Yearly";
 
+const BILLING_FREQUENCY_MAP: Record<
+  BillingFrequency,
+  { value: number; unit: "week" | "month" | "year" }
+> = {
+  Weekly: { value: 1, unit: "week" },
+  "Bi-weekly": { value: 2, unit: "week" },
+  Monthly: { value: 1, unit: "month" },
+  Quarterly: { value: 3, unit: "month" },
+  "Semi-yearly": { value: 6, unit: "month" },
+  Yearly: { value: 1, unit: "year" },
+};
+
+const calculateRenewalDate = (frequency: BillingFrequency) => {
+  const config = BILLING_FREQUENCY_MAP[frequency];
+  return dayjs().add(config.value, config.unit).toISOString();
+};
+
 const FREQUENCY_OPTIONS: BillingFrequency[] = [
   "Weekly",
   "Bi-weekly",
@@ -70,7 +87,6 @@ const CreateSubscriptionModal = ({
     `sub-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
   const handleClose = () => {
-    resetForm();
     onClose();
   };
 
@@ -82,7 +98,13 @@ const CreateSubscriptionModal = ({
 
   const handleSubmit = () => {
     const numericPrice = parseFloat(price);
-    if (!name.trim() || isNaN(numericPrice) || numericPrice <= 0) return;
+    if (
+      !name.trim() ||
+      isNaN(numericPrice) ||
+      numericPrice <= 0 ||
+      !paymentMethod.trim()
+    )
+      return;
 
     const existing = useSubscriptionsStore
       .getState()
@@ -92,24 +114,7 @@ const CreateSubscriptionModal = ({
 
     const submit = () => {
       const startDate = dayjs().toISOString();
-
-      const renewalDate = dayjs().add(frequency === "Weekly"
-            ? 1
-            : frequency === "Bi-weekly"
-              ? 2
-              : frequency === "Monthly"
-                ? 1
-                : frequency === "Quarterly"
-                  ? 3
-                  : frequency === "Semi-yearly"
-                    ? 6
-                    : 1,
-          frequency === "Weekly" || frequency === "Bi-weekly"
-            ? "week"
-            : frequency === "Yearly"
-              ? "year"
-              : "month",
-        ).toISOString();
+      const renewalDate = calculateRenewalDate(frequency);
 
       const newSub: Subscription = {
         id: generateId(),

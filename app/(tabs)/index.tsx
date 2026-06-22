@@ -7,20 +7,25 @@ import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import { icons } from "@/constants/icons";
 import { colors } from "@/constants/theme";
 import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, normalizeToMonthlyPrice } from "@/lib/utils";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 
 export default function App() {
-  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
+    string | null
+  >(null);
   const subscriptions = useSubscriptionsStore((state) => state.subscriptions);
-  const addSubscription = useSubscriptionsStore((state) => state.addSubscription);
+  const addSubscription = useSubscriptionsStore(
+    (state) => state.addSubscription,
+  );
   const [isModalVisible, setIsModalVisible] = useState(false);
   const router = useRouter();
 
-  const upcomingSubscriptions: UpcomingSubscription[] = subscriptions.filter((sub) => sub.renewalDate && sub.status === "active")
+  const upcomingSubscriptions: UpcomingSubscription[] = subscriptions
+    .filter((sub) => sub.renewalDate && sub.status === "active")
     .map((sub) => ({
       id: sub.id,
       icon: sub.icon,
@@ -43,7 +48,10 @@ export default function App() {
                 <Text className="home-balance-label">Total Monthly Spend</Text>
                 <Text className="home-balance-amount">
                   {formatCurrency(
-                    subscriptions.reduce((total, sub) => total + sub.price, 0),
+                    subscriptions.reduce(
+                      (total, sub) => total + normalizeToMonthlyPrice(sub),
+                      0,
+                    ),
                     "USD",
                   )}
                 </Text>
@@ -84,7 +92,7 @@ export default function App() {
                   <Text className="home-stats-value">
                     {formatCurrency(
                       subscriptions.reduce(
-                        (total, sub) => total + sub.price,
+                        (total, sub) => total + normalizeToMonthlyPrice(sub),
                         0,
                       ) / subscriptions.length || 0,
                       "USD",
@@ -125,13 +133,16 @@ export default function App() {
               />
             </View>
           )}
-          data={subscriptions.filter((sub) => sub.status === "active").slice(0, 3)}
+          data={subscriptions
+            .filter((sub) => sub.status === "active")
+            .slice(0, 3)}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <HomeSubcriptions
               {...item}
               expanded={expandedSubscriptionId === item.id}
-              onPress={() => setExpandedSubscriptionId((currentId) =>
+              onPress={() =>
+                setExpandedSubscriptionId((currentId) =>
                   currentId === item.id ? null : item.id,
                 )
               }
