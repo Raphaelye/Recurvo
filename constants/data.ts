@@ -24,7 +24,6 @@ export const HOME_BALANCE = {
 export const HOME_SUBSCRIPTIONS: Subscription[] = [
     {
         id: "adobe-creative-cloud",
-        icon: icons.adobe,
         name: "Adobe Creative Cloud",
         plan: "Teams Plan",
         category: "Design",
@@ -38,7 +37,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     },
     {
         id: "github-pro",
-        icon: icons.github,
         name: "GitHub Pro",
         plan: "Developer",
         category: "Developer Tools",
@@ -52,7 +50,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     },
     {
         id: "claude-pro",
-        icon: icons.claude,
         name: "Claude Pro",
         plan: "Pro Plan",
         category: "AI Tools",
@@ -66,7 +63,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     },
     {
         id: "canva-pro",
-        icon: icons.canva,
         name: "Canva Pro",
         plan: "Yearly Access",
         category: "Design",

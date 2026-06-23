@@ -28,7 +28,6 @@ export default function App() {
     .filter((sub) => sub.renewalDate && sub.status === "active")
     .map((sub) => ({
       id: sub.id,
-      icon: sub.icon,
       name: sub.name,
       price: sub.price,
       currency: sub.currency || "USD",
@@ -43,66 +42,70 @@ export default function App() {
         <FlatList
           extraData={subscriptions}
           ListHeaderComponent={() => (
-            <View className="px-4">
-              <View className="home-balance-card">
-                <Text className="home-balance-label">Total Monthly Spend</Text>
-                <Text className="home-balance-amount">
-                  {formatCurrency(
-                    subscriptions.reduce(
-                      (total, sub) => total + normalizeToMonthlyPrice(sub),
-                      0,
-                    ),
-                    "USD",
-                  )}
-                </Text>
-              </View>
+            <View className="px-4 ">
+              
+              <View className="border border-border mt-5 py-5 rounded-2xl bg-card shadow-sm shadow-accent/30 p-2 mb-2">
 
-              <View className="home-stats-container">
-                <View className="home-stats-card">
-                  <View className="home-stats-row">
-                    <View className="home-stats-icon">
-                      <Image
-                        source={icons.barchart}
-                        className="w-4 h-4"
-                        style={{ tintColor: colors.accent }}
-                      />
-                    </View>
-                    <Text className="home-stats-label">ACTIVE</Text>
-                  </View>
-
-                  <Text className="home-stats-value">
-                    {
-                      subscriptions.filter((sub) => sub.status === "active")
-                        .length
-                    }
+                <View className="home-balance-card">
+                  <Text className="home-balance-label">TOTAL SPEND:</Text>
+                  <Text className="home-balance-amount">
+                    {formatCurrency(
+                      subscriptions.reduce((sum, sub) => sum + sub.price, 0),
+                      "USD")}
                   </Text>
                 </View>
-                <View className="home-stats-card">
-                  <View className="home-stats-row">
-                    <View className="home-stats-icon">
-                      <Image
-                        source={icons.trend}
-                        className="w-4 h-4"
-                        style={{ tintColor: colors.accent }}
-                      />
-                    </View>
-                    <Text className="home-stats-label">AVG. COST</Text>
-                  </View>
 
-                  <Text className="home-stats-value">
-                    {formatCurrency(
-                      subscriptions.reduce(
-                        (total, sub) => total + normalizeToMonthlyPrice(sub),
-                        0,
-                      ) / subscriptions.length || 0,
-                      "USD",
-                    )}
-                  </Text>
+                <View className="home-stats-container"> 
+                  <View className="home-stats-card">
+                    <View className="home-stats-row">
+                      <View className="home-stats-icon">
+                        <Image
+                          source={icons.barchart}
+                          className="w-4 h-4"
+                          style={{ tintColor: colors.accent }}
+                        />
+                      </View>
+                      <View className= "items-center text-left flex justify-center">
+                        <Text className="home-stats-label">ACTIVE</Text>
+
+                        <Text className="home-stats-value">
+                          {
+                            subscriptions.filter((sub) => sub.status === "active").length
+                          }
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View className="home-stats-card">
+                    <View className="home-stats-row">
+                      <View className="home-stats-icon">
+                        <Image
+                          source={icons.trend}
+                          className="w-4 h-4"
+                          style={{ tintColor: colors.accent }}
+                        />
+                      </View>
+                      <View className= "items-center flex justify-center">
+                        <Text className="home-stats-label">AVG. COST</Text>
+                        <Text className="home-stats-value">
+                          {formatCurrency(
+                            subscriptions.reduce(
+                              (total, sub) => total + normalizeToMonthlyPrice(sub),
+                              0,
+                            ) / subscriptions.length || 0,
+                            "USD",
+                          )}
+                        </Text>
+
+                      </View>        
+                    </View>
+
+                  </View>
                 </View>
               </View>
 
               <View className="list-head">
-                <Text className="list-title">Upcoming Subscriptions</Text>
+                <Text className="text-lg font-sans-semibold text-muted">Upcoming Subscriptions</Text>
               </View>
 
               <FlatList

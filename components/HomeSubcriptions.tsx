@@ -4,8 +4,10 @@ import { formatCurrency, formatStatusLabel, formatSubscriptionDateTime } from "@
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
+
+const logoDev = process.env.EXPO_PUBLIC_LOGO_DEV_PUBLIC_KEY
+
 const HomeSubcriptions = ({
-  icon,
   name,
   billing,
   price,
@@ -23,9 +25,9 @@ const HomeSubcriptions = ({
         <View className="px-4">
             <View  className="sub-card border-b border-border "> 
                 <View className="sub-head">
-                    <View className="img-container">
-                        <Image source={icon} className="sub-icon" />
-                    </View>
+                    
+                    <Image source={{uri: `https://img.logo.dev/name/${name}?token=${logoDev}`}} className="sub-icon" />
+                    
                     <View className="sub-main">
                         <View>
                             <Text
@@ -106,7 +108,7 @@ const HomeSubcriptions = ({
                 }
             </View>
         </View>
-    );
+    )
 };
 
 export default HomeSubcriptions;

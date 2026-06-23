@@ -11,7 +11,6 @@ const ListHeading = ({ title, onPress }: ListHeadingProps) => {
 
       <TouchableOpacity onPress={onPress} className="list-action ">
         <Text className="list-action-text">View all</Text>
-        <Image source={icons.rightarrow} className="list-action-icon"  style={{ tintColor: colors.accent }}/>
       </TouchableOpacity>
     </View>
   );

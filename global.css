@@ -124,7 +124,7 @@
     }
 
     .home-balance-card {
-        @apply  justify-between gap-3 py-2 mt-1;
+        @apply justify-between  items-center gap-3;
     }
 
     .home-balance-label {
@@ -136,11 +136,11 @@
     }
 
     .home-stats-container{
-        @apply my-2 flex-row gap-4 ;
+        @apply mt-7 flex-row items-center justify-end gap-9;
     }
 
     .home-stats-card{
-        @apply flex-1 items-start justify-start rounded-2xl bg-secondarybg gap-2 p-2 border border-border;
+        @apply flex-1 items-center justify-start gap-2 p-2 ;
     }
 
     .home-stats-row{
@@ -148,15 +148,15 @@
     }
 
     .home-stats-icon{
-        @apply size-7 bg-accent/14 p-4 justify-center items-center rounded-full;
+        @apply size-8 bg-accent/14 p-4 justify-center items-center rounded-full;
     }
 
     .home-stats-label{
-        @apply text-sm font-sans-semibold text-muted;
+        @apply text-[10px] font-sans-semibold text-muted;
     }
 
     .home-stats-value{
-        @apply text-2xl font-sans-bold text-foreground ml-2;
+        @apply text-xl font-sans-bold text-foreground ;
     }
 
     .list-head {
@@ -164,7 +164,7 @@
     }
 
     .list-title {
-        @apply text-xl font-sans-semibold text-muted ;
+        @apply text-[20px] font-sans-semibold text-muted;
     }
 
     .list-action {
@@ -172,7 +172,7 @@
     }
 
     .list-action-text {
-        @apply text-base font-sans-bold text-accent/70;
+        @apply text-base font-sans-extrabold text-accent;
     }
 
     .list-action-icon {
@@ -188,7 +188,7 @@
     }
 
     .upcoming-icon {
-        @apply size-8;
+        @apply size-8 rounded-xl;
     }
 
     .upcoming-meta{
@@ -216,7 +216,7 @@
     }
 
     .home-empty-state {
-        @apply text-base font-sans-medium text-muted/80;
+        @apply text-base font-sans-medium text-muted;
     }
     
     .sub-card {

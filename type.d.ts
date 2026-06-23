@@ -14,7 +14,6 @@ declare global {
 
     interface Subscription {
         id: string;
-        icon: ImageSourcePropType;
         name: string;
         plan?: string;
         category?: string;
@@ -37,7 +36,6 @@ declare global {
 
     interface UpcomingSubscription {
         id: string;
-        icon: ImageSourcePropType;
         name: string;
         price: number;
         currency?: string;
