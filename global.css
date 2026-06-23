@@ -92,11 +92,11 @@
     }
 
     .header-bg{
-        @apply p-4 shadow-md;
+        @apply p-4 shadow-md shadow-white/3 ;
     }
 
     .home-header {
-        @apply flex-row items-center justify-between;
+        @apply flex-row items-center justify-between ;
     }
 
     .home-user {
@@ -124,7 +124,7 @@
     }
 
     .home-balance-card {
-        @apply  justify-between gap-3 py-2 mt-1;
+        @apply  justify-between gap-3 py-2 mt-1 items-center rounded-2xl bg-secondarybg px-4 border border-border;
     }
 
     .home-balance-label {
@@ -164,15 +164,15 @@
     }
 
     .list-title {
-        @apply text-xl font-sans-semibold text-muted ;
+        @apply text-lg font-sans-bold text-muted ;
     }
 
     .list-action {
-        @apply  px-3 flex-row items-center justify-center gap-2 py-1;
+        @apply  px-3 flex-row items-center justify-center gap-1 py-1;
     }
 
     .list-action-text {
-        @apply text-base font-sans-bold text-accent/70;
+        @apply text-base font-sans-bold text-accent;
     }
 
     .list-action-icon {
@@ -188,7 +188,7 @@
     }
 
     .upcoming-icon {
-        @apply size-8;
+        @apply size-8 rounded-xl;
     }
 
     .upcoming-meta{
@@ -236,7 +236,7 @@
     }
 
     .sub-icon {
-        @apply size-10 rounded-full;
+        @apply size-10 rounded-xl;
     }
 
     .sub-copy {

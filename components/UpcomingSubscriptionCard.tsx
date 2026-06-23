@@ -3,13 +3,14 @@ import React from 'react'
 import {formatCurrency} from "@/lib/utils";
 
 
-const UpcomingSubscriptionCard = ({ name, price, daysLeft, icon, currency }:UpcomingSubscription) => {
+const UpcomingSubscriptionCard = ({ name, price, daysLeft, currency }:UpcomingSubscription) => {
+    const logoDev = process.env.EXPO_PUBLIC_LOGO_DEV_PUBLIC_KEY;
     return (
         <View className="upcoming-card ">
             <View className="upcoming-row">
-                <View className="img-container">
-                    <Image source={icon} className="upcoming-icon" />
-                </View>
+
+                <Image source={{uri : `https://img.logo.dev/name/${name}?token=${logoDev}`}} className="upcoming-icon" />
+                
                 <View className='flex-1'>
                     <Text className="upcoming-name" ellipsizeMode='tail' numberOfLines={1}>{name}</Text>
                     <Text className="upcoming-price">{formatCurrency(price, currency)}</Text>   

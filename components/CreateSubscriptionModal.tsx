@@ -126,7 +126,6 @@ const CreateSubscriptionModal = ({
         status: "active",
         startDate,
         renewalDate,
-        icon: icons.wallet,
         currency: "USD",
       };
 

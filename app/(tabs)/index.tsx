@@ -28,7 +28,6 @@ export default function App() {
     .filter((sub) => sub.renewalDate && sub.status === "active")
     .map((sub) => ({
       id: sub.id,
-      icon: sub.icon,
       name: sub.name,
       price: sub.price,
       currency: sub.currency || "USD",
@@ -43,16 +42,12 @@ export default function App() {
         <FlatList
           extraData={subscriptions}
           ListHeaderComponent={() => (
-            <View className="px-4">
+            <View className="px-4 mt-4">
               <View className="home-balance-card">
-                <Text className="home-balance-label">Total Monthly Spend</Text>
+                <Text className="home-balance-label">Total Spend</Text>
                 <Text className="home-balance-amount">
                   {formatCurrency(
-                    subscriptions.reduce(
-                      (total, sub) => total + normalizeToMonthlyPrice(sub),
-                      0,
-                    ),
-                    "USD",
+                    subscriptions.reduce((total, sub) => total + sub.price, 0), "USD"
                   )}
                 </Text>
               </View>
@@ -102,7 +97,7 @@ export default function App() {
               </View>
 
               <View className="list-head">
-                <Text className="list-title">Upcoming Subscriptions</Text>
+                <Text className="list-title ">Upcoming Subscriptions</Text>
               </View>
 
               <FlatList

@@ -1,80 +1,96 @@
 import type { ImageSourcePropType } from "react-native";
 
 declare global {
-    interface AppTab {
-        name: string;
-        title: string;
-        icon: ImageSourcePropType;
-    }
+  interface AppTab {
+    name: string;
+    title: string;
+    icon: ImageSourcePropType;
+  }
 
-    interface TabIconProps {
-        focused: boolean;
-        icon: ImageSourcePropType;
-    }
+  interface TabIconProps {
+    focused: boolean;
+    icon: ImageSourcePropType;
+  }
 
-    interface Subscription {
-        id: string;
-        icon: ImageSourcePropType;
-        name: string;
-        plan?: string;
-        category?: string;
-        paymentMethod?: string;
-        status?: string;
-        startDate?: string;
-        price: number;
-        currency?: string;
-        billing: string;
-        renewalDate?: string;
-        color?: string;
-    }
+  interface Subscription {
+    id: string;
+    name: string;
+    plan?: string;
+    category?: string;
+    paymentMethod?: string;
+    status?: string;
+    startDate?: string;
+    price: number;
+    currency?: string;
+    billing: string;
+    renewalDate?: string;
+    color?: string;
+    usageFrequency?: "daily" | "weekly" | "monthly" | "rarely" | "never";
+    lastUsedDate?: string;
+    userRating?: 1 | 2 | 3 | 4 | 5;
+    createdAt?: string;
+  }
 
-    interface SubscriptionCardProps extends Omit<Subscription, "id"> {
-        expanded: boolean;
-        onPress: () => void;
-        onCancelPress?: () => void;
-        isCancelling?: boolean;
-    }
+  interface SubscriptionCardProps extends Omit<Subscription, "id"> {
+    expanded: boolean;
+    onPress: () => void;
+    onCancelPress?: () => void;
+    isCancelling?: boolean;
+  }
 
-    interface UpcomingSubscription {
-        id: string;
-        icon: ImageSourcePropType;
-        name: string;
-        price: number;
-        currency?: string;
-        daysLeft: number;
-    }
+  interface UpcomingSubscription {
+    id: string;
+    name: string;
+    price: number;
+    currency?: string;
+    daysLeft: number;
+  }
 
-    interface UpcomingSubscriptionCardProps
-        extends Omit<UpcomingSubscription, "id"> {}
+  interface UpcomingSubscriptionCardProps extends Omit<
+    UpcomingSubscription,
+    "id"
+  > {}
 
-        
-    interface ListHeadingProps {
-        title: string;
-        onPress: () => void;
+  interface ListHeadingProps {
+    title: string;
+    onPress: () => void;
+  }
 
-    }
+  interface HomeHeaderProps {
+    onAddPress: () => void;
+  }
 
-    interface HomeHeaderProps {
-        onAddPress: () => void;
-    }
+  interface Onboarding {
+    id: string;
+    image: ImageSourcePropType;
+    title: string;
+    description: string;
+  }
 
-    interface Onboarding{
-        id: string;
-        image: ImageSourcePropType;
-        title: string;
-        description: string;
-    }
+  interface CreateSubscriptionModal {
+    visible: boolean;
+    onClose: () => void;
+    onAdd: (sub: Subscription) => void;
+  }
 
-    interface CreateSubscriptionModal{
-        visible: boolean;
-        onClose: () => void;
-        onAdd: (sub: Subscription) => void;
-    }
-    
-    interface SubscriptionsStore {
-        subscriptions: Subscription[];
-        addSubscription: (subscription: Subscription) => void;
-    }
+  interface SubscriptionsStore {
+    subscriptions: Subscription[];
+    addSubscription: (subscription: Subscription) => void;
+    updateSubscription: (id: string, updates: Partial<Subscription>) => void;
+  }
+
+  interface SubscriptionHealth {
+    subscriptionId: string;
+    healthScore: number;
+    usageScore: number;
+    valueScore: number;
+    riskScore: number;
+    costPerUse: number;
+    totalSpentLifetime: number;
+    recommendation: "keep" | "review" | "cancel";
+    daysUnused?: number;
+  }
 }
 
-export {};
+export { };
+
