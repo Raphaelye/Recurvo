@@ -1,19 +1,14 @@
-import { HOME_BALANCE, HOME_USER } from "@/constants/data";
+import {  HOME_USER } from "@/constants/data";
 import { icons } from "@/constants/icons";
-import { image } from "@/constants/images";
 import { colors } from "@/constants/theme";
-import { formatCurrency } from "@/lib/utils";
-import dayjs from "dayjs";
-import React from "react";
-import { Image, ImageBackground, Text, View, Pressable} from "react-native";
-import { StyledSafeAreaView } from "./StyledSafeAreaView";
+import { Image, Text, View, Pressable} from "react-native";
 import { useUser } from "@clerk/expo";
-import { useRouter } from "expo-router";
+// import { useRouter } from "expo-router";
 
 const HomeHeader = ({onAddPress}: HomeHeaderProps) => {
 
   const { user } = useUser();
-  const router = useRouter();
+  // const router = useRouter();
   
   return (
 

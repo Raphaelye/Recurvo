@@ -18,9 +18,7 @@ export default function App() {
     string | null
   >(null);
   const subscriptions = useSubscriptionsStore((state) => state.subscriptions);
-  const addSubscription = useSubscriptionsStore(
-    (state) => state.addSubscription,
-  );
+  const addSubscription = useSubscriptionsStore((state) => state.addSubscription);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const router = useRouter();
 

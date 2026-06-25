@@ -98,6 +98,7 @@ const CreateSubscriptionModal = ({
 
   const handleSubmit = () => {
     const numericPrice = parseFloat(price);
+    
     if (
       !name.trim() ||
       isNaN(numericPrice) ||
@@ -108,9 +109,8 @@ const CreateSubscriptionModal = ({
 
     const existing = useSubscriptionsStore
       .getState()
-      .subscriptions.some(
-        (sub) => sub.name.trim().toLowerCase() === name.trim().toLowerCase(),
-      );
+      .subscriptions.some((sub) => sub.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
 
     const submit = () => {
       const startDate = dayjs().toISOString();
@@ -126,7 +126,6 @@ const CreateSubscriptionModal = ({
         status: "active",
         startDate,
         renewalDate,
-        icon: icons.wallet,
         currency: "USD",
       };
 

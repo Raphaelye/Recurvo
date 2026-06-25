@@ -2,7 +2,8 @@ import "@/global.css";
 import { ClerkLoaded, ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect } from "react";
 
@@ -25,13 +26,21 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     if (fontError) {
       console.error("Font load error:", fontError);
     }
 
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
+    if ((fontsLoaded || fontError) && isMounted) {
+      SplashScreen.hideAsync().catch((error) => {
+        console.warn("Failed to hide splash screen:", error);
+      });
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [fontsLoaded, fontError]);
 
   if (!fontsLoaded && !fontError) return null;
