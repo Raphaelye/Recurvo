@@ -263,15 +263,19 @@
     }
 
     .sub-body {
-        @apply rounded-xl p-4 bg-secondarybg border-muted/30 border w-90;
+        @apply rounded-3xl p-7 bg-card border-muted/30 border w-90;
     }
 
     .sub-details {
-        @apply gap-4 ml-2 ;
+        @apply gap-3 ;
+    }
+
+    .sub-details-row{
+        @apply flex-row items-center justify-between gap-3;
     }
 
     .sub-row {
-        @apply flex-row items-center justify-between mb-4;
+        @apply flex-row items-center justify-between ;
     }
 
     .sub-row-copy {

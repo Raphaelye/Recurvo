@@ -15,7 +15,6 @@ declare global {
     interface Subscription {
         id: string;
         name: string;
-        plan?: string;
         category?: string;
         paymentMethod?: string;
         status?: string;
@@ -32,6 +31,8 @@ declare global {
         onPress: () => void;
         onCancelPress?: () => void;
         isCancelling?: boolean;
+        menuVisible: boolean;
+        setMenuVisible: (visible: boolean) => void;
     }
 
     interface UpcomingSubscription {

@@ -25,7 +25,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     {
         id: "adobe-creative-cloud",
         name: "Adobe Creative Cloud",
-        plan: "Teams Plan",
         category: "Design",
         paymentMethod: "Visa ending in 8530",
         status: "active",
@@ -38,7 +37,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     {
         id: "github-pro",
         name: "GitHub Pro",
-        plan: "Developer",
         category: "Developer Tools",
         paymentMethod: "Mastercard ending in 2408",
         status: "active",
@@ -51,7 +49,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     {
         id: "claude-pro",
         name: "Claude Pro",
-        plan: "Pro Plan",
         category: "AI Tools",
         paymentMethod: "Amex ending in 1010",
         status: "active",
@@ -64,7 +61,6 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     {
         id: "canva-pro",
         name: "Canva Pro",
-        plan: "Yearly Access",
         category: "Design",
         paymentMethod: "Visa ending in 7784",
         status: "cancelled",

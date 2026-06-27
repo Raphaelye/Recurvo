@@ -2,7 +2,7 @@ import HomeSubcriptions from "@/components/HomeSubcriptions";
 import { StyledSafeAreaView } from "@/components/StyledSafeAreaView";
 import { icons } from "@/constants/icons";
 import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
     FlatList,
     Image,
@@ -17,10 +17,18 @@ const Subscriptions = () => {
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("Monthly");
   const subscriptions = useSubscriptionsStore((state) => state.subscriptions);
 
   const tabs = ["Monthly", "Yearly", "Cancelled"];
+
+  const handleSubscriptionPress = (itemId: string) => {
+    const isSameCardSelected = expandedSubscriptionId === itemId;
+
+    setExpandedSubscriptionId(itemId);
+    setMenuVisible(isSameCardSelected ? !menuVisible : true);
+  };
 
   const filteredSubscriptions = subscriptions.filter((sub) => {
     return activeTab === "Cancelled"
@@ -70,11 +78,9 @@ const Subscriptions = () => {
             <HomeSubcriptions
               {...item}
               expanded={expandedSubscriptionId === item.id}
-              onPress={() =>
-                setExpandedSubscriptionId((currentId) =>
-                  currentId === item.id ? null : item.id,
-                )
-              }
+              onPress={() => handleSubscriptionPress(item.id)}
+              menuVisible={menuVisible}
+              setMenuVisible={setMenuVisible}
             />
           )}
           contentContainerClassName=" pb-32 pt-4"

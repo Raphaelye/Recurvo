@@ -14,13 +14,20 @@ import { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 
 export default function App() {
-  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
-    string | null
-  >(null);
+  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
   const subscriptions = useSubscriptionsStore((state) => state.subscriptions);
   const addSubscription = useSubscriptionsStore((state) => state.addSubscription);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const router = useRouter();
+
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const handleSubscriptionPress = (itemId: string) => {
+    const isSameCardSelected = expandedSubscriptionId === itemId;
+
+    setExpandedSubscriptionId(itemId);
+    setMenuVisible(isSameCardSelected ? !menuVisible : true);
+  };
 
   const upcomingSubscriptions: UpcomingSubscription[] = subscriptions
     .filter((sub) => sub.renewalDate && sub.status === "active")
@@ -142,11 +149,9 @@ export default function App() {
             <HomeSubcriptions
               {...item}
               expanded={expandedSubscriptionId === item.id}
-              onPress={() =>
-                setExpandedSubscriptionId((currentId) =>
-                  currentId === item.id ? null : item.id,
-                )
-              }
+              onPress={() => handleSubscriptionPress(item.id)}
+              menuVisible={menuVisible}
+              setMenuVisible={setMenuVisible}
             />
           )}
           showsVerticalScrollIndicator={false}

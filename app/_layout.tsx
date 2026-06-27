@@ -7,13 +7,26 @@ import * as SplashScreen from "expo-splash-screen";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect } from "react";
 
-SplashScreen.preventAutoHideAsync();
+
+// At the top of your root layout or App.js
+if (__DEV__) {
+  const originalError = console.error;
+  console.error = (...args) => {
+    if (args[0]?.includes?.('No native splash screen registered')) {
+      return; // Ignore this specific error
+    }
+    originalError(...args);
+  };
+}
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
 
 if (!publishableKey) {
-  throw new Error("Add your Clerk Publishable Key to the .env file");
+  throw new Error("Add your Clerk Publisable Key to the .env file");
 }
+
+// Prevent splash screen from auto-hiding BEFORE the component renders
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -26,24 +39,26 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    let isMounted = true;
-
-    if (fontError) {
-      console.error("Font load error:", fontError);
+    async function hideSplash() {
+      if (fontsLoaded || fontError) {
+        try {
+          await SplashScreen.hideAsync();
+        } catch (error) {
+          console.warn("SplashScreen hide error:", error);
+        }
+      }
     }
-
-    if ((fontsLoaded || fontError) && isMounted) {
-      SplashScreen.hideAsync().catch((error) => {
-        console.warn("Failed to hide splash screen:", error);
-      });
-    }
-
-    return () => {
-      isMounted = false;
-    };
+    hideSplash();
   }, [fontsLoaded, fontError]);
 
-  if (!fontsLoaded && !fontError) return null;
+  if (!fontsLoaded && !fontError) {
+    return null; // Keep splash visible while fonts load
+  }
+
+  if (fontError) {
+    console.error("Font load error:", fontError);
+    // Optionally: show error UI or fallback
+  }
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>

@@ -1,17 +1,16 @@
 import { icons } from "@/constants/icons";
 import { colors } from "@/constants/theme";
-import {formatCurrency,  formatSubscriptionDateTime,} from "@/lib/utils";
-import { BlurView } from "expo-blur";
-import { useState } from "react";
+import { formatCurrency, formatStatusLabel, formatSubscriptionDateTime, } from "@/lib/utils";
 import {
     Image,
+
     Modal,
+
     Pressable,
     Text,
     View,
 } from "react-native";
 
-const logoDev = process.env.EXPO_PUBLIC_LOGO_DEV_PUBLIC_KEY;
 
 const HomeSubcriptions = ({
     name,
@@ -21,13 +20,18 @@ const HomeSubcriptions = ({
     startDate,
     category,
     renewalDate,
-    plan,
     expanded,
     status,
     paymentMethod,
     onPress,
+    menuVisible,
+    setMenuVisible
 }: SubscriptionCardProps) => {
-    const [menuVisible, setMenuVisible] = useState(false);
+    // const [menuVisible, setMenuVisible] = useState(false);
+
+    const logoDev = process.env.EXPO_PUBLIC_LOGO_DEV_PUBLIC_KEY;
+
+
 
     return (
         <>
@@ -51,9 +55,7 @@ const HomeSubcriptions = ({
                                     {name}
                                 </Text>
                                 <Text className="sub-meta">
-                                    {category?.trim() ||
-                                        plan?.trim() ||
-                                        (renewalDate
+                                    {category?.trim() || (renewalDate
                                             ? formatSubscriptionDateTime(renewalDate)
                                             : "Not Provided")}
                                 </Text>
@@ -67,9 +69,8 @@ const HomeSubcriptions = ({
                             </View>
                         </View>
                         <Pressable
-                            onPress={() => setMenuVisible(true)}
-                            className="p-1 bg-border ml-2 rounded-md"
-                            accessibilityLabel={`menu-${name}`}
+                            onPress={onPress}
+                            className="p-2 ml-2 rounded-md"
                         >
                             <Image
                                 source={icons.menu}
@@ -82,67 +83,174 @@ const HomeSubcriptions = ({
                     </View>
 
                     {expanded && (
-                        <View className="sub-body">
-                            <Text> Sub details </Text>
-                        </View>
+                        <Modal
+                            visible={menuVisible}
+                            transparent
+                            animationType="fade"
+                            onRequestClose={() => setMenuVisible(false)}
+                        >
+                            <View
+                                
+                                style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor:"rgba(0, 0, 0)" }}
+                            >
+                                <View className="sub-body">
+                                    <View className="sub-row">
+                                        <View className="flex items-center justify-start">
+                                            <Pressable className="icon-container"> 
+                                                <Image 
+                                                    source= {icons.archive}
+                                                    className="w-4 h-4"
+                                                    style={{tintColor: colors.foreground}}  
+                                                />
+                                            </Pressable>
+                                        </View>
+                                        <View className="flex-row gap-2 items-center justify-end">
+                                            <Pressable className="icon-container"> 
+                                                <Image
+                                                    source= {icons.edit}
+                                                    className="w-4 h-4"
+                                                    style={{tintColor: colors.foreground}}
+                                                />
+                                            </Pressable>
+                                            <Pressable className="icon-container"> 
+                                                <Image
+                                                    source= {icons.bin}
+                                                    className="w-4 h-4"
+                                                    style={{tintColor: "#dc2626"}}
+
+                                                />
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                    <View className="flex-row flex px-14 items-center justify-center gap-3 mt-5">
+                                        <Image 
+                                            source={{uri: `https://img.logo.dev/name/${name}?token=${logoDev}`}} 
+                                            className="w-15 h-15 rounded-xl"
+                                            
+
+                                        />
+                                        <View className="flex gap-1 justify-center">
+                                            <Text className=" text-3xl text-foreground font-sans-bold  " numberOfLines={1} ellipsizeMode="tail">{name}</Text>
+                                            <Text className="text-lg text-muted ">{formatCurrency(price, currency)} / {billing} </Text>
+                                        </View>
+
+
+                                    </View>
+
+                                    <View className="flex-row items-center gap-3 my-6">
+                                        <View>
+                                            <Image source={icons.calendar}
+                                                className="w-5 h-5"
+                                                style={{tintColor: colors.foreground}}
+                                            />
+                                        </View>
+                                        <View>
+                                            <Text className="text-sm text-muted font-sans-semibold">Next Renewal</Text>
+                                            
+                                            <Text
+                                                className="text-lg text-accent font-sans-bold"
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                            >
+                                            {renewalDate
+                                                ? formatSubscriptionDateTime(renewalDate)
+                                                : "Not Provided"}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View className="sub-details">
+                                        <View className="sub-details-row">
+                                            <View>
+                                                <Text className="sub-label">Category</Text> 
+                                            </View>
+                                            <View>
+                                                <Text
+                                                    className="sub-value"
+                                                    numberOfLines={1}
+                                                    ellipsizeMode="tail"
+                                                >
+                                                    {category?.trim()  || "Not Provided"}
+                                                </Text> 
+                                            </View>
+                                        </View>
+
+                                        <View className="sub-details-row">
+                                            <View>
+                                                <Text className="sub-label">Start Date</Text> 
+                                            </View>
+                                            <View>
+                                                <Text
+                                                className="sub-value"
+                                                numberOfLines={1}
+                                                ellipsizeMode="tail"
+                                                >
+                                                {startDate
+                                                    ? formatSubscriptionDateTime(startDate)
+                                                    : "Not Provided"}
+                                                </Text> 
+                                            </View>
+                                        </View>
+
+                                        <View className="sub-details-row">
+                                            <View>
+                                                <Text className="sub-label">Payment Method</Text> 
+                                            </View>
+                                            <View>
+                                                <Text
+                                                    className="sub-value"
+                                                    numberOfLines={1}
+                                                    ellipsizeMode="tail"
+                                                >
+                                                    {paymentMethod || "Not Provided"}
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        <View className="sub-details-row">
+                                            <View>
+                                                <Text className="sub-label">Status</Text> 
+                                            </View>
+                                            <View>
+                                                <Text
+                                                    className="sub-value"
+                                                    numberOfLines={1}
+                                                    ellipsizeMode="tail"
+                                                >
+                                                    {status ? formatStatusLabel(status) : ""}
+                                                </Text> 
+                                            </View>
+                                        </View>
+
+                                    </View>
+
+                                    <Pressable className='p-2 bg-accent rounded-lg mx-3 mt-6 items-center justify-center'
+                                        android_ripple={{ color: 'rgba(255,255,255,0.5)' }}
+                                        style={({ pressed }) => [
+                                            { opacity: pressed ? 0.75 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] }
+                                        ]}
+
+                                    >
+                                        <Text className='auth-button-text'>
+                                            {status === "cancelled" ? "Reactivate Subscription" : "Cancel Subscription"}
+                                        </Text>
+                                    </Pressable>
+                                    <Pressable onPress={()=> setMenuVisible(false)}
+                                        className='p-2 mx-3 bg-card rounded-lg border border-border mt-2 items-center justify-center'
+                                        android_ripple={{ color: 'rgba(255,255,255,0.5)' }}
+                                        style={({ pressed }) => [
+                                            { opacity: pressed ? 0.75 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] }
+                                        ]}
+                                    >
+                                        <Text className='auth-button-text'>Close</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </Modal>
                     )}
                 </View>
             </View>
 
-            <Modal
-                visible={menuVisible}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setMenuVisible(false)}
-            >
-                <BlurView
-                    intensity={80}
-                    tint="dark"
-                    style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundAttachment:"rgba(225, 225, 225, 0.06)" }}
-                >
-                    <View className="sub-body">
-                        <View className="sub-row">
-                            <View className="flex items-center justify-start">
-                                <Pressable className="icon-container"> 
-                                    <Image 
-                                        source= {icons.archive}
-                                        className="w-4 h-4"
-                                        style={{tintColor: colors.foreground}}  
-                                    />
-                                </Pressable>
-                            </View>
-                            <View className="flex-row gap-2 items-center justify-end">
-                                <Pressable className="icon-container"> 
-                                    <Image
-                                        source= {icons.edit}
-                                        className="w-4 h-4"
-                                        style={{tintColor: colors.foreground}}
-                                    />
-                                </Pressable>
-                                <Pressable className="icon-container"> 
-                                    <Image
-                                        source= {icons.bin}
-                                        className="w-4 h-4"
-                                        style={{tintColor: colors.foreground}}
-
-                                    />
-                                </Pressable>
-                            </View>
-                        </View>
-                        <View className="flex-row items-center justify-center gap-3 mt-4">
-                            <Image 
-                                source={icons.spotifypotify} 
-                                className="w-18 h-18"
-
-                            />
-                            <View className="flex gap-1  justify-center">
-                                <Text className=" text-4xl text-foreground font-sans-bold">Activity</Text>
-                                <Text className="text-xl text-muted ">$20.00 / Monthly </Text>
-                            </View>
-                        </View>
-                    </View>
-                </BlurView>
-            </Modal>
+            
         </>
     );
 };
