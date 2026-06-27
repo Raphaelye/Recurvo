@@ -45,7 +45,7 @@ export default function App() {
       <StyledSafeAreaView className="flex-1 pb-10 bg-background">
         <HomeHeader onAddPress={() => setIsModalVisible(true)} />
         <FlatList
-          extraData={subscriptions}
+          extraData={{ subscriptions, expandedSubscriptionId, menuVisible }}
           ListHeaderComponent={() => (
             <View className="px-4 ">
               

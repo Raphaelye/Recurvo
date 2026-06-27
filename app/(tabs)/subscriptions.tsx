@@ -2,15 +2,15 @@ import HomeSubcriptions from "@/components/HomeSubcriptions";
 import { StyledSafeAreaView } from "@/components/StyledSafeAreaView";
 import { icons } from "@/constants/icons";
 import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    FlatList,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const Subscriptions = () => {
@@ -29,6 +29,11 @@ const Subscriptions = () => {
     setExpandedSubscriptionId(itemId);
     setMenuVisible(isSameCardSelected ? !menuVisible : true);
   };
+
+  useEffect(() => {
+    setExpandedSubscriptionId(null);
+    setMenuVisible(false);
+  }, [activeTab]);
 
   const filteredSubscriptions = subscriptions.filter((sub) => {
     return activeTab === "Cancelled"

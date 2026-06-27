@@ -91,7 +91,7 @@ const HomeSubcriptions = ({
                         >
                             <View
                                 
-                                style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor:"rgba(0, 0, 0)" }}
+                                style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor:"rgb(0, 0, 0)" }}
                             >
                                 <View className="sub-body">
                                     <View className="sub-row">

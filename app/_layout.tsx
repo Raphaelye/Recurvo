@@ -9,16 +9,6 @@ import { useEffect } from "react";
 
 
 // At the top of your root layout or App.js
-if (__DEV__) {
-  const originalError = console.error;
-  console.error = (...args) => {
-    if (args[0]?.includes?.('No native splash screen registered')) {
-      return; // Ignore this specific error
-    }
-    originalError(...args);
-  };
-}
-
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
 
 if (!publishableKey) {
@@ -26,7 +16,13 @@ if (!publishableKey) {
 }
 
 // Prevent splash screen from auto-hiding BEFORE the component renders
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync().catch((error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  if (__DEV__ && message.includes("No native splash screen registered")) {
+    return;
+  }
+  console.warn("SplashScreen preventAutoHideAsync error:", error);
+});
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
