@@ -4,18 +4,18 @@ import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import { clsx } from "clsx";
 import dayjs from "dayjs";
 import { usePostHog } from "posthog-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Alert,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    Image,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const CATEGORIES = [
@@ -67,6 +67,8 @@ const CreateSubscriptionModal = ({
   visible,
   onClose,
   onAdd,
+  initialValues,
+  onUpdate,
 }: CreateSubscriptionModal) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -74,6 +76,7 @@ const CreateSubscriptionModal = ({
   const [frequency, setFrequency] = useState<BillingFrequency>("Monthly");
   const [category, setCategory] = useState("Entertainment");
   const posthog = usePostHog();
+  const isEditing = Boolean(initialValues?.id);
 
   const resetForm = () => {
     setName("");
@@ -91,10 +94,20 @@ const CreateSubscriptionModal = ({
   };
 
   useEffect(() => {
-    if (!visible) {
+    if (visible) {
+      if (initialValues) {
+        setName(initialValues.name || "");
+        setPrice(String(initialValues.price ?? ""));
+        setPaymentMethod(initialValues.paymentMethod || "");
+        setFrequency((initialValues.billing as BillingFrequency) || "Monthly");
+        setCategory(initialValues.category || "Entertainment");
+      } else {
+        resetForm();
+      }
+    } else {
       resetForm();
     }
-  }, [visible]);
+  }, [visible, initialValues]);
 
   const handleSubmit = () => {
     const numericPrice = parseFloat(price);
@@ -109,12 +122,34 @@ const CreateSubscriptionModal = ({
 
     const existing = useSubscriptionsStore
       .getState()
-      .subscriptions.some((sub) => sub.name.trim().toLowerCase() === name.trim().toLowerCase()
-    );
+      .subscriptions.some(
+        (sub) =>
+          sub.name.trim().toLowerCase() === name.trim().toLowerCase() &&
+          sub.id !== initialValues?.id,
+      );
 
     const submit = () => {
-      const startDate = dayjs().toISOString();
+      const startDate = initialValues?.startDate || dayjs().toISOString();
       const renewalDate = calculateRenewalDate(frequency);
+
+      if (isEditing && onUpdate) {
+        const updatedSub: Subscription = {
+          ...initialValues!,
+          name,
+          price: numericPrice,
+          billing: frequency,
+          paymentMethod,
+          category,
+          status: initialValues?.status || "active",
+          startDate,
+          renewalDate,
+          currency: "USD",
+        };
+
+        onUpdate(updatedSub);
+        handleClose();
+        return;
+      }
 
       const newSub: Subscription = {
         id: generateId(),
@@ -184,7 +219,9 @@ const CreateSubscriptionModal = ({
         />
         <View className="modal-container">
           <View className="modal-header">
-            <Text className="modal-title">New Subscription</Text>
+            <Text className="modal-title">
+              {isEditing ? "Edit Subscription" : "New Subscription"}
+            </Text>
             <TouchableOpacity onPress={onClose} className="modal-close">
               <Image
                 className="modal-close-text home-add-icon"
@@ -313,7 +350,7 @@ const CreateSubscriptionModal = ({
                     !isValid && "auth-button-text-disabled",
                   )}
                 >
-                  Add Subscription
+                  {isEditing ? "Save Changes" : "Add Subscription"}
                 </Text>
               </TouchableOpacity>
             </ScrollView>

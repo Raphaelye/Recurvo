@@ -1,16 +1,19 @@
 import { StyledSafeAreaView } from "@/components/StyledSafeAreaView";
 import { HOME_USER } from "@/constants/data";
+import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import { useAuth, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { usePostHog } from "posthog-react-native";
-import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Pressable, Text, View } from "react-native";
 
 const Settings = () => {
   const { signOut } = useAuth();
   const { user } = useUser();
   const router = useRouter();
   const posthog = usePostHog();
+  const archivedSubscriptions = useSubscriptionsStore((state) =>
+    state.subscriptions.filter((subscription) => subscription.status === "archived"),
+  );
 
   const handleSignOut = async () => {
     try {
@@ -58,6 +61,21 @@ const Settings = () => {
 
         {/* Actions */}
         <View className="gap-4">
+          <Pressable
+            onPress={() =>
+              Alert.alert(
+                "Archived subscriptions",
+                archivedSubscriptions.length > 0
+                  ? archivedSubscriptions.map((subscription) => subscription.name).join("\n")
+                  : "No archived subscriptions yet.",
+              )
+            }
+            className="auth-button"
+          >
+            <Text className="auth-button-text">
+              Archived subscriptions ({archivedSubscriptions.length})
+            </Text>
+          </Pressable>
           <Pressable onPress={handleSignOut} className="auth-button">
             <Text className="auth-button-text">Sign Out</Text>
           </Pressable>

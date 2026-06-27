@@ -1,7 +1,11 @@
+import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
 import { icons } from "@/constants/icons";
 import { colors } from "@/constants/theme";
+import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import { formatCurrency, formatStatusLabel, formatSubscriptionDateTime, } from "@/lib/utils";
+import { useState } from "react";
 import {
+    Alert,
     Image,
 
     Modal,
@@ -13,6 +17,7 @@ import {
 
 
 const HomeSubcriptions = ({
+    id,
     name,
     billing,
     price,
@@ -27,9 +32,91 @@ const HomeSubcriptions = ({
     menuVisible,
     setMenuVisible
 }: SubscriptionCardProps) => {
-    // const [menuVisible, setMenuVisible] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
+    const deleteSubscription = useSubscriptionsStore((state) => state.deleteSubscription);
+    const archiveSubscription = useSubscriptionsStore((state) => state.archiveSubscription);
+    const cancelSubscription = useSubscriptionsStore((state) => state.cancelSubscription);
+    const reactivateSubscription = useSubscriptionsStore((state) => state.reactivateSubscription);
+    const updateSubscription = useSubscriptionsStore((state) => state.updateSubscription);
 
     const logoDev = process.env.EXPO_PUBLIC_LOGO_DEV_PUBLIC_KEY;
+
+    const closeDetails = () => setMenuVisible(false);
+
+    const confirmAction = (title: string, message: string, onConfirm: () => void) => {
+        Alert.alert(title, message, [
+            { text: "Cancel", style: "cancel" },
+            { text: "Continue", style: "destructive", onPress: onConfirm },
+        ]);
+    };
+
+    const handleArchive = () => {
+        confirmAction(
+            "Archive subscription",
+            `Archive ${name}? It will be moved to your settings screen.`,
+            () => {
+                archiveSubscription(id);
+                closeDetails();
+            },
+        );
+    };
+
+    const handleDelete = () => {
+        confirmAction(
+            "Delete subscription",
+            `Delete ${name} permanently?`,
+            () => {
+                deleteSubscription(id);
+                closeDetails();
+            },
+        );
+    };
+
+    const handleCancel = () => {
+        confirmAction(
+            "Cancel subscription",
+            `Cancel ${name}? It will stay in your list but stop contributing to active spend.`,
+            () => {
+                cancelSubscription(id);
+                closeDetails();
+            },
+        );
+    };
+
+    const handleReactivate = () => {
+        confirmAction(
+            "Reactivate subscription",
+            `Reactivate ${name}?`,
+            () => {
+                reactivateSubscription(id);
+                closeDetails();
+            },
+        );
+    };
+
+    const handleEdit = () => {
+        setEditingSubscription({
+            id,
+            name,
+            category,
+            paymentMethod,
+            status,
+            startDate,
+            price,
+            currency,
+            billing,
+            renewalDate,
+        });
+        setEditModalVisible(true);
+        closeDetails();
+    };
+
+    const handleUpdate = (updatedSubscription: Subscription) => {
+        updateSubscription(updatedSubscription.id, updatedSubscription);
+        setEditModalVisible(false);
+        setEditingSubscription(null);
+    };
 
 
 
@@ -96,7 +183,7 @@ const HomeSubcriptions = ({
                                 <View className="sub-body">
                                     <View className="sub-row">
                                         <View className="flex items-center justify-start">
-                                            <Pressable className="icon-container"> 
+                                            <Pressable className="icon-container" onPress={handleArchive}> 
                                                 <Image 
                                                     source= {icons.archive}
                                                     className="w-4 h-4"
@@ -105,14 +192,14 @@ const HomeSubcriptions = ({
                                             </Pressable>
                                         </View>
                                         <View className="flex-row gap-2 items-center justify-end">
-                                            <Pressable className="icon-container"> 
+                                            <Pressable className="icon-container" onPress={handleEdit}> 
                                                 <Image
                                                     source= {icons.edit}
                                                     className="w-4 h-4"
                                                     style={{tintColor: colors.foreground}}
                                                 />
                                             </Pressable>
-                                            <Pressable className="icon-container"> 
+                                            <Pressable className="icon-container" onPress={handleDelete}> 
                                                 <Image
                                                     source= {icons.bin}
                                                     className="w-4 h-4"
@@ -228,7 +315,7 @@ const HomeSubcriptions = ({
                                         style={({ pressed }) => [
                                             { opacity: pressed ? 0.75 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] }
                                         ]}
-
+                                        onPress={status === "cancelled" ? handleReactivate : handleCancel}
                                     >
                                         <Text className='auth-button-text'>
                                             {status === "cancelled" ? "Reactivate Subscription" : "Cancel Subscription"}
@@ -250,7 +337,16 @@ const HomeSubcriptions = ({
                 </View>
             </View>
 
-            
+            <CreateSubscriptionModal
+                visible={editModalVisible}
+                onClose={() => {
+                    setEditModalVisible(false);
+                    setEditingSubscription(null);
+                }}
+                onAdd={() => {}}
+                initialValues={editingSubscription}
+                onUpdate={handleUpdate}
+            />
         </>
     );
 };
