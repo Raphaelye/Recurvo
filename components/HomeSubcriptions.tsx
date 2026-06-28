@@ -7,9 +7,7 @@ import { useState } from "react";
 import {
     Alert,
     Image,
-
     Modal,
-
     Pressable,
     Text,
     View,
@@ -54,7 +52,7 @@ const HomeSubcriptions = ({
     const handleArchive = () => {
         confirmAction(
             "Archive subscription",
-            `Archive ${name}? It will be moved to your settings screen.`,
+            `Are you sure you want to archive ${name}?`,
             () => {
                 archiveSubscription(id);
                 closeDetails();
@@ -76,7 +74,7 @@ const HomeSubcriptions = ({
     const handleCancel = () => {
         confirmAction(
             "Cancel subscription",
-            `Cancel ${name}? It will stay in your list but stop contributing to active spend.`,
+            `Are you sure you want to cancel ${name}?`,
             () => {
                 cancelSubscription(id);
                 closeDetails();
@@ -343,7 +341,6 @@ const HomeSubcriptions = ({
                     setEditModalVisible(false);
                     setEditingSubscription(null);
                 }}
-                onAdd={() => {}}
                 initialValues={editingSubscription}
                 onUpdate={handleUpdate}
             />

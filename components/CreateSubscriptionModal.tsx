@@ -6,16 +6,16 @@ import dayjs from "dayjs";
 import { usePostHog } from "posthog-react-native";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const CATEGORIES = [
@@ -63,13 +63,11 @@ const FREQUENCY_OPTIONS: BillingFrequency[] = [
   "Yearly",
 ];
 
-const CreateSubscriptionModal = ({
-  visible,
-  onClose,
-  onAdd,
-  initialValues,
-  onUpdate,
-}: CreateSubscriptionModal) => {
+const CreateSubscriptionModal = (props: CreateSubscriptionModal) => {
+  const { visible, onClose } = props;
+  const onAdd = "onAdd" in props ? props.onAdd : undefined;
+  const initialValues = "initialValues" in props ? props.initialValues : undefined;
+  const onUpdate = "onUpdate" in props ? props.onUpdate : undefined;
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -96,10 +94,16 @@ const CreateSubscriptionModal = ({
   useEffect(() => {
     if (visible) {
       if (initialValues) {
+        const nextFrequency =
+          initialValues.billing &&
+          initialValues.billing in BILLING_FREQUENCY_MAP
+            ? (initialValues.billing as BillingFrequency)
+            : "Monthly";
+
         setName(initialValues.name || "");
         setPrice(String(initialValues.price ?? ""));
         setPaymentMethod(initialValues.paymentMethod || "");
-        setFrequency((initialValues.billing as BillingFrequency) || "Monthly");
+        setFrequency(nextFrequency);
         setCategory(initialValues.category || "Entertainment");
       } else {
         resetForm();
@@ -130,7 +134,10 @@ const CreateSubscriptionModal = ({
 
     const submit = () => {
       const startDate = initialValues?.startDate || dayjs().toISOString();
-      const renewalDate = calculateRenewalDate(frequency);
+      const renewalDate =
+        isEditing && initialValues?.billing === frequency
+          ? (initialValues.renewalDate ?? calculateRenewalDate(frequency))
+          : calculateRenewalDate(frequency);
 
       if (isEditing && onUpdate) {
         const updatedSub: Subscription = {
@@ -174,7 +181,7 @@ const CreateSubscriptionModal = ({
         currency: "USD",
       });
 
-      onAdd(newSub);
+      onAdd?.(newSub);
       handleClose();
     };
 

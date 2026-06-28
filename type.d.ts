@@ -64,13 +64,24 @@ declare global {
     description: string;
   }
 
-  interface CreateSubscriptionModal {
+  type CreateSubscriptionModalBase = {
     visible: boolean;
     onClose: () => void;
+  };
+
+  type CreateSubscriptionModalCreate = CreateSubscriptionModalBase & {
     onAdd: (sub: Subscription) => void;
-    initialValues?: Subscription | null;
-    onUpdate?: (sub: Subscription) => void;
-  }
+    initialValues?: never;
+    onUpdate?: never;
+  };
+
+  type CreateSubscriptionModalEdit = CreateSubscriptionModalBase & {
+    initialValues: Subscription | null;
+    onUpdate: (sub: Subscription) => void;
+    onAdd?: never;
+  };
+
+  type CreateSubscriptionModal = CreateSubscriptionModalCreate | CreateSubscriptionModalEdit;
 
   interface SubscriptionsStore {
     subscriptions: Subscription[];

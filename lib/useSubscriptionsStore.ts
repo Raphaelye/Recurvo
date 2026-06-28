@@ -2,7 +2,7 @@ import { HOME_SUBSCRIPTIONS } from "@/constants/data";
 import { create } from "zustand";
 
 const isSpendRelevant = (subscription: Subscription) =>
-  subscription.status === "active";
+  subscription.status === "active" || !subscription.status;
 
 export const useSubscriptionsStore = create<SubscriptionsStore>((set, get) => ({
   subscriptions: HOME_SUBSCRIPTIONS,
