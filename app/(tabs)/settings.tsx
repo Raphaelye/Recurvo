@@ -4,7 +4,7 @@ import { HOME_USER } from "@/constants/data";
 import { useAuth, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { usePostHog } from "posthog-react-native";
-import {  Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Pressable, Text, View } from "react-native";
 
 const Settings = () => {
   const { signOut } = useAuth();
@@ -17,8 +17,8 @@ const Settings = () => {
 
   const handleSignOut = async () => {
     try {
-      posthog.capture("user_signed_out");
       await signOut();
+      posthog.capture("user_signed_out");
       posthog.reset(); // Clear user identity on sign out
       router.replace("/(auth)/welcome");
     } catch (error) {
