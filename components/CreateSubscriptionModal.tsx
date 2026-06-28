@@ -4,7 +4,7 @@ import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import { clsx } from "clsx";
 import dayjs from "dayjs";
 import { usePostHog } from "posthog-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -63,17 +63,18 @@ const FREQUENCY_OPTIONS: BillingFrequency[] = [
   "Yearly",
 ];
 
-const CreateSubscriptionModal = ({
-  visible,
-  onClose,
-  onAdd,
-}: CreateSubscriptionModal) => {
+const CreateSubscriptionModal = (props: CreateSubscriptionModal) => {
+  const { visible, onClose } = props;
+  const onAdd = "onAdd" in props ? props.onAdd : undefined;
+  const initialValues = "initialValues" in props ? props.initialValues : undefined;
+  const onUpdate = "onUpdate" in props ? props.onUpdate : undefined;
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [frequency, setFrequency] = useState<BillingFrequency>("Monthly");
   const [category, setCategory] = useState("Entertainment");
   const posthog = usePostHog();
+  const isEditing = Boolean(initialValues?.id);
 
   const resetForm = () => {
     setName("");
@@ -91,10 +92,26 @@ const CreateSubscriptionModal = ({
   };
 
   useEffect(() => {
-    if (!visible) {
+    if (visible) {
+      if (initialValues) {
+        const nextFrequency =
+          initialValues.billing &&
+          initialValues.billing in BILLING_FREQUENCY_MAP
+            ? (initialValues.billing as BillingFrequency)
+            : "Monthly";
+
+        setName(initialValues.name || "");
+        setPrice(String(initialValues.price ?? ""));
+        setPaymentMethod(initialValues.paymentMethod || "");
+        setFrequency(nextFrequency);
+        setCategory(initialValues.category || "Entertainment");
+      } else {
+        resetForm();
+      }
+    } else {
       resetForm();
     }
-  }, [visible]);
+  }, [visible, initialValues]);
 
   const handleSubmit = () => {
     const numericPrice = parseFloat(price);
@@ -109,12 +126,37 @@ const CreateSubscriptionModal = ({
 
     const existing = useSubscriptionsStore
       .getState()
-      .subscriptions.some((sub) => sub.name.trim().toLowerCase() === name.trim().toLowerCase()
-    );
+      .subscriptions.some(
+        (sub) =>
+          sub.name.trim().toLowerCase() === name.trim().toLowerCase() &&
+          sub.id !== initialValues?.id,
+      );
 
     const submit = () => {
-      const startDate = dayjs().toISOString();
-      const renewalDate = calculateRenewalDate(frequency);
+      const startDate = initialValues?.startDate || dayjs().toISOString();
+      const renewalDate =
+        isEditing && initialValues?.billing === frequency
+          ? (initialValues.renewalDate ?? calculateRenewalDate(frequency))
+          : calculateRenewalDate(frequency);
+
+      if (isEditing && onUpdate) {
+        const updatedSub: Subscription = {
+          ...initialValues!,
+          name,
+          price: numericPrice,
+          billing: frequency,
+          paymentMethod,
+          category,
+          status: initialValues?.status || "active",
+          startDate,
+          renewalDate,
+          currency: "USD",
+        };
+
+        onUpdate(updatedSub);
+        handleClose();
+        return;
+      }
 
       const newSub: Subscription = {
         id: generateId(),
@@ -139,7 +181,7 @@ const CreateSubscriptionModal = ({
         currency: "USD",
       });
 
-      onAdd(newSub);
+      onAdd?.(newSub);
       handleClose();
     };
 
@@ -184,7 +226,9 @@ const CreateSubscriptionModal = ({
         />
         <View className="modal-container">
           <View className="modal-header">
-            <Text className="modal-title">New Subscription</Text>
+            <Text className="modal-title">
+              {isEditing ? "Edit Subscription" : "New Subscription"}
+            </Text>
             <TouchableOpacity onPress={onClose} className="modal-close">
               <Image
                 className="modal-close-text home-add-icon"
@@ -313,7 +357,7 @@ const CreateSubscriptionModal = ({
                     !isValid && "auth-button-text-disabled",
                   )}
                 >
-                  Add Subscription
+                  {isEditing ? "Save Changes" : "Add Subscription"}
                 </Text>
               </TouchableOpacity>
             </ScrollView>

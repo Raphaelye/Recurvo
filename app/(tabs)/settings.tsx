@@ -1,24 +1,28 @@
 import { StyledSafeAreaView } from "@/components/StyledSafeAreaView";
 import { HOME_USER } from "@/constants/data";
+// import { useSubscriptionsStore } from "@/lib/useSubscriptionsStore";
 import { useAuth, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { usePostHog } from "posthog-react-native";
-import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Pressable, Text, View } from "react-native";
 
 const Settings = () => {
   const { signOut } = useAuth();
   const { user } = useUser();
   const router = useRouter();
   const posthog = usePostHog();
+  // const archivedSubscriptions = useSubscriptionsStore((state) =>
+  //   state.subscriptions.filter((subscription) => subscription.status === "archived"),
+  // );
 
   const handleSignOut = async () => {
     try {
+      await signOut();
       posthog.capture("user_signed_out");
       posthog.reset(); // Clear user identity on sign out
-      await signOut();
       router.replace("/(auth)/welcome");
     } catch (error) {
+      Alert.alert("Sign out failed", "Please try again.");
       console.error("Error signing out:", error);
     }
   };
