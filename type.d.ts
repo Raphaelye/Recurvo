@@ -81,7 +81,9 @@ declare global {
     onAdd?: never;
   };
 
-  type CreateSubscriptionModal = CreateSubscriptionModalCreate | CreateSubscriptionModalEdit;
+  type CreateSubscriptionModal =
+    | CreateSubscriptionModalCreate
+    | CreateSubscriptionModalEdit;
 
   interface SubscriptionsStore {
     subscriptions: Subscription[];

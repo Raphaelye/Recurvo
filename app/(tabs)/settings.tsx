@@ -4,7 +4,7 @@ import { HOME_USER } from "@/constants/data";
 import { useAuth, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import { usePostHog } from "posthog-react-native";
-import {  Image, Pressable, Text, View } from "react-native";
+import {  Alert, Image, Pressable, Text, View } from "react-native";
 
 const Settings = () => {
   const { signOut } = useAuth();
@@ -15,13 +15,16 @@ const Settings = () => {
   //   state.subscriptions.filter((subscription) => subscription.status === "archived"),
   // );
 
-  const handleSignOut =  () => {
-    
+  const handleSignOut = async () => {
+    try {
       posthog.capture("user_signed_out");
+      await signOut();
       posthog.reset(); // Clear user identity on sign out
-      signOut();
       router.replace("/(auth)/welcome");
-    
+    } catch (error) {
+      Alert.alert("Sign out failed", "Please try again.");
+      console.error("Error signing out:", error);
+    }
   };
 
   return (
